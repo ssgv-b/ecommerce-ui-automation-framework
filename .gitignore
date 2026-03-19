@@ -1,0 +1,10 @@
+/target/
+/allure-report/
+/allure-results/
+/.allure/
+/downloads/
+/.idea/
+*.iml
+
+/.DS_Store
+**/.DS_Store
