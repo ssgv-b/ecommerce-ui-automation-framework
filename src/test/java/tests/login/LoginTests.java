@@ -1,5 +1,6 @@
 package tests.login;
 
+import framework.helpers.AccountCleanupHelper;
 import framework.base.BaseTest;
 import framework.listeners.RetryAnalyzer;
 import framework.testdata.AccountRegistrationTestDataFactory;
@@ -24,19 +25,19 @@ public class LoginTests extends BaseTest {
         HomePage homePage = null;
 
         try {
-            LoginPage loginPage = openLoginPage();
+            LoginPage loginPage = flows.openLoginPage();
             homePage = flows.registerAndContinueToHomePage(loginPage, testUser);
             TestAssertions.assertLoggedInUser(homePage, testUser.getIdentity());
             TestAssertions.deleteAccountAndAssertHomePage(homePage);
             homePage = null;
         } finally {
-            deleteAccountIfPossible(homePage);
+            AccountCleanupHelper.deleteAccountIfPossible(homePage);
         }
     }
 
     @Test(groups = {"smoke", "regression", "auth", "critical_path", "destructive", "slow"})
     public void createAccountLoginAndDelete() {
-        CreateAccountPage createAccountPage = beginUserRegistration(testUser.getIdentity());
+        CreateAccountPage createAccountPage = flows.beginUserRegistration(testUser.getIdentity());
         LoginPage loginPage = flows.createMinimalAccountAndLogOut(createAccountPage, testUser.getProfile());
         HomePage homePage = loginPage.logInAccount(testUser.getIdentity());
         TestAssertions.assertLoggedInUser(homePage, testUser.getIdentity());
@@ -45,7 +46,7 @@ public class LoginTests extends BaseTest {
 
     @Test(groups = {"smoke", "regression", "auth", "negative", "non_destructive", "fast"})
     public void loginWithInvalidCredentials() {
-        LoginPage loginPage = openLoginPage();
+        LoginPage loginPage = flows.openLoginPage();
         UserIdentityData userData = UserIdentityDataFactory.invalidUser();
         loginPage.logInAccount(userData);
         String errorMessage = loginPage.getLoginErrorMessage();
@@ -55,14 +56,14 @@ public class LoginTests extends BaseTest {
     @Test(groups = {"regression", "auth", "non_destructive", "fast"})
     public void logInAccountAndLogOut() {
         UserIdentityData userDataExistingUser = UserIdentityDataFactory.existingSeededUser();
-        HomePage homePage = loginAsExistingUser(userDataExistingUser);
+        HomePage homePage = flows.loginAsExistingUser(userDataExistingUser);
         TestAssertions.assertLoggedInUser(homePage, userDataExistingUser);
         homePage.getNavBar().logOut();
     }
 
     @Test(groups = {"regression", "auth", "negative", "non_destructive", "fast"})
     public void registerUserWithExistingEmail() {
-        LoginPage loginPage = openLoginPage();
+        LoginPage loginPage = flows.openLoginPage();
         UserIdentityData existingEmailUserData = UserIdentityDataFactory.invalidUser();
         loginPage.createAccount(existingEmailUserData);
         String errorMessage = loginPage.getExistingEmailErrorMessage();
@@ -71,7 +72,7 @@ public class LoginTests extends BaseTest {
 
     @Test(groups = {"regression", "auth", "destructive", "slow"})
     public void createAccountAndLogOut() {
-        LoginPage loginPage = openLoginPage();
+        LoginPage loginPage = flows.openLoginPage();
         HomePage homePage = flows.registerAndContinueToHomePage(loginPage,testUser);
         TestAssertions.assertLoggedInUser(homePage, testUser.getIdentity());
         homePage.getNavBar().logOut();

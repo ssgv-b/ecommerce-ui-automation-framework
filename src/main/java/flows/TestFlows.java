@@ -36,4 +36,30 @@ public class TestFlows {
         AccountCreatedPage accountCreatedPage = createAccountPage.registerAccount(testUser.getProfile());
         return accountCreatedPage.continueToHomePage();
     }
+
+    public HomePage openHomePage() {
+        HomePage homePage = new HomePage(driverContext);
+        homePage.assertOnHomePage();
+        return homePage;
+    }
+
+    public ProductsPage openProductsPage() {
+        HomePage homePage = openHomePage();
+        return homePage.getNavBar().navigateToProducts();
+    }
+
+    public HomePage loginAsExistingUser(UserIdentityData identity) {
+        LoginPage loginPage = openLoginPage();
+        return loginPage.logInAccount(identity);
+    }
+
+    public CreateAccountPage beginUserRegistration(UserIdentityData identity) {
+        LoginPage loginPage = openLoginPage();
+        return loginPage.createAccount(identity);
+    }
+
+    public LoginPage openLoginPage() {
+        HomePage homePage = openHomePage();
+        return homePage.getNavBar().navigateToLogin();
+    }
 }

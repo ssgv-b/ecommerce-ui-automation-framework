@@ -87,7 +87,7 @@ public class TestListeners implements ITestListener {
     private WebDriver getDriverInstance(ITestResult result) {
         Object instance = result.getInstance();
         if (instance instanceof BaseTest) {
-            return ((BaseTest) instance).getDriverListener();
+            return ((BaseTest) instance).getDriver();
         }
         return null;
     }

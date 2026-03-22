@@ -11,11 +11,11 @@ public class ContactUsTests extends BaseTest {
 
     @Test(groups = {"smoke", "regression", "contact", "non_destructive", "fast"})
     public void submitContactUsForm() {
-        HomePage homePage = openHomePage();
+        HomePage homePage = flows.openHomePage();
         ContactPage contactPage = homePage.getNavBar().navigateToContactUs();
         contactPage.enterContactFormDetails("Simeon Ivanov", "simeon@test.com", "Test Subject", "This is a test message for the contact us form.");
         contactPage.submitContactForm();
         Assert.assertEquals(contactPage.getContactFormSuccessMessage(), FORM_SUCCESS_MESSAGE);
-        homePage = contactPage.continueToHome();
+        contactPage.continueToHome();
     }
 }

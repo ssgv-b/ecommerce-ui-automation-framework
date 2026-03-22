@@ -1,10 +1,7 @@
 package tests.checkout;
 
 import framework.base.BaseTest;
-import framework.testdata.AccountRegistrationTestDataFactory;
 import framework.utils.TestAssertions;
-import models.AccountRegistrationData;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.*;
 import static framework.utils.TestAssertions.assertRegistrationAndCheckoutAddressesMatch;
@@ -13,7 +10,7 @@ public class CheckoutTests extends BaseTest {
 
     @Test(groups = {"regression", "checkout", "data_integrity", "destructive", "slow"})
     public void verifyAddressDetailsDuringCheckout() {
-        CreateAccountPage createAccountPage = beginUserRegistration(testUser.getIdentity());
+        CreateAccountPage createAccountPage = flows.beginUserRegistration(testUser.getIdentity());
         AccountCreatedPage accountCreatedPage = createAccountPage.registerAccount(testUser.getProfile());
         HomePage homePage = accountCreatedPage.continueToHomePage();
 
