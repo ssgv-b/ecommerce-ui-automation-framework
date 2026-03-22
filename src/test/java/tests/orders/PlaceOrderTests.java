@@ -1,5 +1,6 @@
 package tests.orders;
 
+import framework.helpers.AccountCleanupHelper;
 import framework.base.BaseTest;
 import framework.testdata.AccountRegistrationTestDataFactory;
 import framework.testdata.CreditCardDetailsDataFactory;
@@ -31,7 +32,7 @@ public class PlaceOrderTests extends BaseTest {
     @Test(groups = {"regression", "order", "checkout", "critical_path", "data_integrity", "destructive", "slow"})
     public void userCanPlaceOrderImmediatelyAfterRegistration() {
         HomePage homePage = null;
-        ProductsPage productsPage = openProductsPage();
+        ProductsPage productsPage = flows.openProductsPage();
         CartPage cartPage = flows.addProductsAndGoToCart(productsPage, 2);
 
         try {
@@ -49,7 +50,7 @@ public class PlaceOrderTests extends BaseTest {
             TestAssertions.deleteAccountAndAssertHomePage(homePage);
             homePage = null;
         } finally {
-            deleteAccountIfPossible(homePage);
+            AccountCleanupHelper.deleteAccountIfPossible(homePage);
         }
     }
 
@@ -58,7 +59,7 @@ public class PlaceOrderTests extends BaseTest {
         HomePage homePage = null;
 
         try {
-            CreateAccountPage createAccountPage = beginUserRegistration(testUser.getIdentity());
+            CreateAccountPage createAccountPage = flows.beginUserRegistration(testUser.getIdentity());
             AccountCreatedPage accountCreatedPage = createAccountPage.registerAccount(testUser.getProfile());
             homePage = accountCreatedPage.continueToHomePage();
             TestAssertions.assertLoggedInUser(homePage, testUser.getIdentity());
@@ -74,14 +75,14 @@ public class PlaceOrderTests extends BaseTest {
             TestAssertions.deleteAccountAndAssertHomePage(homePage);
             homePage = null;
         } finally {
-            deleteAccountIfPossible(homePage);
+            AccountCleanupHelper.deleteAccountIfPossible(homePage);
         }
     }
 
     @Test(groups = {"smoke", "regression", "order", "checkout", "critical_path", "slow"})
     public void userCanPlaceAnOrderAfterLoginToExistingAccount() {
         UserIdentityData userDataExistingUser = UserIdentityDataFactory.existingSeededUser();
-        HomePage homePage = loginAsExistingUser(userDataExistingUser);
+        HomePage homePage = flows.loginAsExistingUser(userDataExistingUser);
         TestAssertions.assertLoggedInUser(homePage, userDataExistingUser);
 
         ProductsPage productsPage = homePage.getNavBar().navigateToProducts();
@@ -102,7 +103,7 @@ public class PlaceOrderTests extends BaseTest {
         String path = ConfigReader.getProperty("downloadDir");
         String absolutePath = Paths.get(path).toAbsolutePath().toString();
         Path downloadPath = Paths.get(absolutePath);
-        ProductsPage productsPage = openProductsPage();
+        ProductsPage productsPage = flows.openProductsPage();
         CartPage cartPage = flows.addProductsAndGoToCart(productsPage, 1);
 
         try {
@@ -129,7 +130,7 @@ public class PlaceOrderTests extends BaseTest {
             TestAssertions.deleteAccountAndAssertHomePage(homePage);
             homePage = null;
         } finally {
-            deleteAccountIfPossible(homePage);
+            AccountCleanupHelper.deleteAccountIfPossible(homePage);
         }
     }
 }

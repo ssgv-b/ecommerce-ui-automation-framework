@@ -16,6 +16,7 @@ public class DriverContext {
     public WebDriver getDriver() {
         return driver;
     }
+
     public Duration getWaitDuration() {
         return waitDuration;
     }
