@@ -1,11 +1,19 @@
 package framework.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.InputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Locale;
 import java.util.Properties;
 
 public class ConfigReader {
+
+    private ConfigReader() {
+    }
+    private static final Logger log = LoggerFactory.getLogger(ConfigReader.class);
 
     private static final String DEFAULT_CONFIG_FILE = "config.properties";
     private static final String TEST_ENV_PROPERTY = "test.env";
@@ -44,17 +52,14 @@ public class ConfigReader {
         }
 
         String envConfigFile = "config-" + selectedEnv.toLowerCase(Locale.ROOT) + ".properties";
-        InputStream input = ConfigReader.class.getClassLoader().getResourceAsStream(envConfigFile);
-        if (input != null) {
-            try {
-                input.close();
-            } catch (IOException ignored) {
-                // no-op: check stream is only used to verify resource existence.
-            }
-            return envConfigFile;
+        URL configResource = ConfigReader.class.getClassLoader().getResource(envConfigFile);
+        if (configResource == null) {
+            throw new RuntimeException("Config file " + envConfigFile + " for environment: " + selectedEnv + " not found");
         }
-        return DEFAULT_CONFIG_FILE;
+        log.info("Running with environment: {}", selectedEnv);
+        return envConfigFile;
     }
+
 
     public static String getProperty(String key) {
         String value = firstNonBlank(
