@@ -77,6 +77,19 @@ public class ConfigReader {
         return value;
     }
 
+    public static String getProperty(String key, String defaultValue) {
+        String value = firstNonBlank(
+                System.getProperty(key),
+                System.getenv(toEnvironmentKey(key)),
+                properties.getProperty(key)
+        );
+
+        if (value == null || value.isBlank()) {
+            return defaultValue;
+        }
+        return value;
+    }
+
     private static String toEnvironmentKey(String key) {
         return key.replaceAll("([a-z])([A-Z])", "$1_$2")
                 .replace('.', '_')
