@@ -1,18 +1,24 @@
 package framework.listeners;
 
 import framework.annotations.NoRetry;
+import framework.utils.ConfigReader;
 import org.testng.IAnnotationTransformer;
 import org.testng.annotations.ITestAnnotation;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
+import static constants.Groups.CRITICAL_PATH;
+import static constants.Groups.DOWNLOAD;
+
 public class RetryTransformer implements IAnnotationTransformer {
 
+    // Raw types required by IAnnotationTransformer API
+    @SuppressWarnings("rawtypes")
     @Override
     public void transform(ITestAnnotation annotation, Class testClass,
                           Constructor testConstructor, Method testMethod) {
         if (testMethod == null) return;
+        if (hasNoRetryAnnotation(testMethod)) return;
         if(annotation.getRetryAnalyzerClass() !=null) {
             return;
         }
@@ -22,13 +28,13 @@ public class RetryTransformer implements IAnnotationTransformer {
     }
 
     private static boolean shouldRetry (ITestAnnotation annotation, Method testMethod) {
-        return isCiEnvironment() && isInRetryGroup(annotation) && !hasNoRetryAnnotation(testMethod);
+        return isCiEnvironment() && isInRetryGroup(annotation);
     }
 
     private static boolean isCiEnvironment() {
-        String testEnv = System.getProperty("test.env");
-        String ciVar = System.getenv("CI");
-        String ghVar = System.getenv("GITHUB_ACTIONS");
+        String testEnv = ConfigReader.getProperty("test.env", "local");
+        String ciVar = ConfigReader.getProperty("CI", "false");
+        String ghVar = ConfigReader.getProperty("GITHUB_ACTIONS", "false");
         return "ci".equalsIgnoreCase(testEnv)
                 || "true".equalsIgnoreCase(ciVar)
                 || "true".equalsIgnoreCase(ghVar);
@@ -40,7 +46,7 @@ public class RetryTransformer implements IAnnotationTransformer {
             return false;
         }
         for(String group : groups) {
-            if("critical_path".equalsIgnoreCase(group) || "download".equalsIgnoreCase(group)) {
+            if(CRITICAL_PATH.equals(group) || DOWNLOAD.equals(group)) {
                 return true;
             }
         }
@@ -48,16 +54,7 @@ public class RetryTransformer implements IAnnotationTransformer {
     }
 
     private static boolean hasNoRetryAnnotation(Method testMethod) {
-        Annotation[] methodAnnotations = testMethod.getAnnotations();
-        if (methodAnnotations.length == 0) {
-            return false;
-        }
-        for(Annotation annotation : methodAnnotations) {
-            if (annotation.annotationType()== NoRetry.class){
-                return true;
-            }
-        }
-        return false;
+        return testMethod.isAnnotationPresent(NoRetry.class);
     }
 }
 
