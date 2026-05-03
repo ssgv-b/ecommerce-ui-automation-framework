@@ -23,7 +23,7 @@ jobs:
       run: mvn clean test -Pci
       
     - name: Upload Allure results
-      if: !cancelled()
+      if: "!cancelled()"
       uses: actions/upload-artifact@v4
       with:
         name: Allure report
