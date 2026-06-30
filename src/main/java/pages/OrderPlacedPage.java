@@ -21,7 +21,6 @@ public class OrderPlacedPage extends BasePage {
 
     public void downloadInvoice() {
         click(downloadInvoiceButton);
-
     }
 
     public String getOrderSuccessMessage() {

@@ -4,6 +4,7 @@ import components.BrandFilterComponent;
 import components.CategoryFilterComponent;
 import framework.base.BasePage;
 import framework.drivers.DriverContext;
+import framework.utils.TextNormalizer;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -36,9 +37,9 @@ public class ProductsPage extends BasePage {
     private WebElement findProductCardByName(String productName) {
         waitForVisibleElement(productNameLocator);
         List <WebElement> products = driver.findElements(productCards);
-        String normalizedTarget = normalizer.normalizeText(productName);
+        String normalizedTarget = TextNormalizer.normalizeText(productName);
         return products.stream().filter(p ->
-                normalizer.normalizeText(p.findElement(productNameLocator).getText()).equals(normalizedTarget))
+                TextNormalizer.normalizeText(p.findElement(productNameLocator).getText()).equals(normalizedTarget))
                 .findFirst().orElseThrow(() -> new RuntimeException("Product name " + productName + " not found!"));
     }
 
@@ -50,14 +51,14 @@ public class ProductsPage extends BasePage {
 
     public void addProductsToCart(int count) {
         List<WebElement> products = driver.findElements(productCards);
-        if (count ==0) {
+        if (count == 0) {
             return;
         }
         if (products.isEmpty()) {
             throw new RuntimeException("No search results found!");
         }
         int actualCount = Math.min(count, products.size());
-        for (int i=0; i<actualCount; i++) {
+        for (int i=0; i < actualCount; i++) {
             WebElement product = products.get(i);
             product.findElement(addToCartButton).click();
             waitForVisibleElement(continueShoppingButton);
@@ -91,7 +92,7 @@ public class ProductsPage extends BasePage {
 
     public Set<String> getAllSearchProductNames() {
        List <WebElement> results =  driver.findElements(productNameLocator);
-       return results.stream().map(WebElement::getText).map(normalizer::normalizeText).collect(Collectors.toSet());
+       return results.stream().map(WebElement::getText).map(TextNormalizer::normalizeText).collect(Collectors.toSet());
     }
 
     public String getFirstSearchProductName() {
@@ -101,6 +102,4 @@ public class ProductsPage extends BasePage {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("No search result found!"));
     }
-
-
 }

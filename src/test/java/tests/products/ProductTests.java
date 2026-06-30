@@ -28,7 +28,7 @@ public class ProductTests extends BaseTest {
     private static final String SEARCH_PRODUCTS_VALUE = "Tshirt";
     private static final String REVIEW_SUCCESS_MESSAGE = "Thank you for your review.";
     private static final String EMPTY_CART_MESSAGE = "Cart is empty!";
-    private final TextNormalizer normalizer = new TextNormalizer();
+
 
     @Test(groups = {"smoke", "regression", "products", "non_destructive", "fast"})
     public void userCanViewProductDetailsFromProductsPage() {
@@ -115,7 +115,7 @@ public class ProductTests extends BaseTest {
         List <CartItem> items = cartPage.readCartItems();
         Set<String> cartProductNames = items.stream()
                 .map(CartItem::getProductName)
-                .map(normalizer::normalizeText)
+                .map(TextNormalizer::normalizeText)
                 .collect(Collectors.toSet());
         Assert.assertEquals(cartProductNames,searchResults);
 
@@ -126,7 +126,7 @@ public class ProductTests extends BaseTest {
         List <CartItem> itemsAfterLogin = cartPage.readCartItems();
         Set <String> cartProductNamesAfterLogin = itemsAfterLogin.stream()
                 .map(CartItem::getProductName)
-                .map(normalizer::normalizeText)
+                .map(TextNormalizer::normalizeText)
                 .collect(Collectors.toSet());
         Assert.assertEquals(cartProductNamesAfterLogin,searchResults);
     }
@@ -144,7 +144,7 @@ public class ProductTests extends BaseTest {
         HomePage homePage = flows.openHomePage();
         homePage.addRecommendedProductToCart(SLEEVELESS_DRESS);
         CartPage cartPage = homePage.modal.goToCart();
-        Assert.assertEquals(normalizer.normalizeText(cartPage.getCartItemName()), normalizer.normalizeText(SLEEVELESS_DRESS));
+        Assert.assertEquals(TextNormalizer.normalizeText(cartPage.getCartItemName()), TextNormalizer.normalizeText(SLEEVELESS_DRESS));
     }
 
 }

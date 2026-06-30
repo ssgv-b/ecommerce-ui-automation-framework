@@ -15,7 +15,7 @@ public class CheckoutPage extends BasePage {
         waitForVisibleElement(checkoutPageSignal);
     }
 
-    private final By orderCommentTextArea = By.cssSelector(".form-control");
+    private final By orderCommentTextArea = By.xpath("//textarea[@name='message']");
     private final By placeOrderButton = By.xpath("//a[contains(text(),'Place Order')]");
     private final By deliveryAddressContainer = By.id("address_delivery");
     private final By invoiceAddressContainer = By.id("address_invoice");
@@ -34,7 +34,7 @@ public class CheckoutPage extends BasePage {
         return new PaymentPage(driverContext);
     }
 
-    public Address getCheckoutAddress(By addressType) {
+    private Address getCheckoutAddress(By addressType) {
         WebElement address = driver.findElement(addressType);
         String name = address.findElement(addressName).getText();
         String street = getNormalizedStreetAddress(address);

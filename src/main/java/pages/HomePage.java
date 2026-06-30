@@ -5,7 +5,7 @@ import components.BrandFilterComponent;
 import framework.drivers.DriverContext;
 import framework.base.BasePage;
 import framework.utils.ConfigReader;
-import models.UserIdentityData;
+import framework.utils.TextNormalizer;
 import org.openqa.selenium.*;
 import org.testng.Assert;
 import components.CategoryFilterComponent;
@@ -53,8 +53,8 @@ public class HomePage extends BasePage {
 
     private WebElement getCarouselProductName(String productName) {
         List<WebElement> carouselItems = driver.findElements(carouselProductWrapper);
-        String normalizedTarget = normalizer.normalizeText(productName);
-         return carouselItems.stream().filter(c->normalizer.normalizeText(c.findElement(carouselProductName)
+        String normalizedTarget = TextNormalizer.normalizeText(productName);
+         return carouselItems.stream().filter(c->TextNormalizer.normalizeText(c.findElement(carouselProductName)
                 .getText()).equals(normalizedTarget)).findFirst()
                 .orElseThrow(()->new RuntimeException("Carousel with name "+productName+" not found!"));
     }
@@ -62,10 +62,6 @@ public class HomePage extends BasePage {
         goToCarouselSection();
         WebElement carouselProduct = getCarouselProductName(productName);
         carouselProduct.findElement(carouselAddToCartBtn).click();
-    }
-
-    public void scrollToHeroSection() {
-        waitAndScrollToElement(homePageIdentifier);
     }
 
     private void acceptCookiesIfPresent() {

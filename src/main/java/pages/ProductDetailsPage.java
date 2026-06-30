@@ -38,7 +38,6 @@ public class ProductDetailsPage extends BasePage {
         String condition = ProductTextParser.parseTextAndTrim(getTextWhenVisible(productCondition));
         String brand = ProductTextParser.parseTextAndTrim(getTextWhenVisible(productBrand));
         return new ProductDetails(name, category, price, availability, condition, brand);
-
     }
 
     public void setProductQuantity(Integer quantity) {

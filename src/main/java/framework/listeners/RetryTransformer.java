@@ -22,12 +22,12 @@ public class RetryTransformer implements IAnnotationTransformer {
         if(annotation.getRetryAnalyzerClass() !=null) {
             return;
         }
-        if(shouldRetry(annotation, testMethod)) {
+        if(shouldRetry(annotation)) {
             annotation.setRetryAnalyzer(RetryAnalyzer.class);
         }
     }
 
-    private static boolean shouldRetry (ITestAnnotation annotation, Method testMethod) {
+    private static boolean shouldRetry (ITestAnnotation annotation) {
         return isCiEnvironment() && isInRetryGroup(annotation);
     }
 
