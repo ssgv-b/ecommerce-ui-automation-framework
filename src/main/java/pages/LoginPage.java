@@ -32,7 +32,6 @@ public class LoginPage extends BasePage {
         enterText(signUpEmailInput, userData.getUserEmail());
         click(signUpButton);
         return new CreateAccountPage(driverContext, userData);
-
     }
 
     public String getLoginErrorMessage() {

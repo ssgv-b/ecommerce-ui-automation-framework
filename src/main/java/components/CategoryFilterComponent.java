@@ -12,9 +12,9 @@ public class CategoryFilterComponent extends BaseComponent {
         super(driverContext);
     }
 
-    private By categoryExpander = By.xpath(".//a[@data-parent='#accordian']/span");
-    private By categoryList = By.xpath("//div[@class='panel-heading']");
-    private By subCategoryList = By.xpath("//div[@class='panel-collapse in']/div/ul/li/a");
+    private final By categoryExpander = By.xpath(".//a[@data-parent='#accordian']/span");
+    private final By categoryList = By.xpath("//div[@class='panel-heading']");
+    private final By subCategoryList = By.xpath("//div[@class='panel-collapse in']/div/ul/li/a");
 
   public ProductsPage selectCategoryAndSubcategory(String mainCategory, String subCategory) {
       WebElement category = selectMainCategory(mainCategory);
@@ -34,9 +34,9 @@ public class CategoryFilterComponent extends BaseComponent {
 
     private WebElement selectMainCategory(String mainCategory) {
         List <WebElement> categoryElements = driver.findElements(categoryList);
-        WebElement selectedCategory = categoryElements.stream().filter(category ->
-                category.getText().equalsIgnoreCase(mainCategory)).findFirst().orElseThrow(()-> new RuntimeException("Category " + mainCategory + " not found."));
-        return selectedCategory;
+        return categoryElements.stream().filter(category ->
+                category.getText().equalsIgnoreCase(mainCategory)).findFirst()
+                .orElseThrow(()-> new RuntimeException("Category " + mainCategory + " not found."));
     }
 
     private void selectSubCategory(WebElement selectedCategory, String subCategory) {

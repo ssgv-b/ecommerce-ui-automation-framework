@@ -3,6 +3,7 @@ package pages;
 import framework.base.BasePage;
 import framework.drivers.DriverContext;
 import framework.utils.ProductTextParser;
+import framework.utils.TextNormalizer;
 import models.CartItem;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
@@ -76,7 +77,7 @@ public class CartPage extends BasePage {
         waitForVisibleElement(cartTableRow);
         List <WebElement> products = getCurrentCartItems();
        return products.stream()
-                .map(e->normalizer.normalizeText(e.findElement(cartProductName)
+                .map(e-> TextNormalizer.normalizeText(e.findElement(cartProductName)
                         .getText()))
                 .findFirst()
                 .orElseThrow(()->new RuntimeException("No products found in cart!"));

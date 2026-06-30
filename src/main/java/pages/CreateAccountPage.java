@@ -2,6 +2,7 @@ package pages;
 
 import framework.base.BasePage;
 import framework.drivers.DriverContext;
+import framework.utils.TextNormalizer;
 import models.AccountRegistrationData;
 import models.UserIdentityData;
 import org.openqa.selenium.By;
@@ -15,35 +16,31 @@ public class CreateAccountPage extends BasePage {
         this.userData = userData;
     }
 
-    private static final String skipSignal = "none";
-    private final By titleMrRadioBtn = By.id("id_gender1");
-    private final By titleMrsRadioBtn = By.id("id_gender2");
-    private final By passwordInput = By.id("password");
-    private final By daysDropdown = By.id("days");
-    private final By monthsDropdown = By.id("months");
-    private final By yearsDropdown = By.id("years");
-    private final By newsLetterCheckbox = By.xpath("//input[@id='newsletter']");
-    private final By specialOffersCheckbox = By.xpath("//input[@id='optin']");
-    private final By firstNameInput = By.id("first_name");
-    private final By lastNameInput = By.id("last_name");
-    private final By companyInput = By.id("company");
-    private final By address1Input = By.id("address1");
-    private final By address2Input = By.id("address2");
-    private final By countryDropdown = By.id("country");
-    private final By stateInput = By.id("state");
-    private final By cityInput = By.id("city");
-    private final By zipCodeInput = By.id("zipcode");
-    private final By mobileNumberInput = By.id("mobile_number");
-    private final By createAccountBtn = By.xpath("//button[@data-qa='create-account']");
-
-    private AccountCreatedPage submitRegistration() {
-        click(createAccountBtn);
-        return new AccountCreatedPage(driverContext);
-    }
+    private static final String titleNotProvided = "null";
+    private static final By titleMrRadioBtn = By.id("id_gender1");
+    private static final By titleMrsRadioBtn = By.id("id_gender2");
+    private static final By passwordInput = By.id("password");
+    private static final By daysDropdown = By.id("days");
+    private static final By monthsDropdown = By.id("months");
+    private static final By yearsDropdown = By.id("years");
+    private static final By newsLetterCheckbox = By.xpath("//input[@id='newsletter']");
+    private static final By specialOffersCheckbox = By.xpath("//input[@id='optin']");
+    private static final By firstNameInput = By.id("first_name");
+    private static final By lastNameInput = By.id("last_name");
+    private static final By companyInput = By.id("company");
+    private static final By address1Input = By.id("address1");
+    private static final By address2Input = By.id("address2");
+    private static final By countryDropdown = By.id("country");
+    private static final By stateInput = By.id("state");
+    private static final By cityInput = By.id("city");
+    private static final By zipCodeInput = By.id("zipcode");
+    private static final By mobileNumberInput = By.id("mobile_number");
+    private static final By createAccountBtn = By.xpath("//button[@data-qa='create-account']");
 
     public AccountCreatedPage registerAccount(AccountRegistrationData data) {
         fillAccountRegistrationData(data);
-        return submitRegistration();
+        click(createAccountBtn);
+        return new AccountCreatedPage(driverContext);
     }
 
     private void setIdentity(AccountRegistrationData data) {
@@ -67,8 +64,8 @@ public class CreateAccountPage extends BasePage {
 
     private void setAddress(AccountRegistrationData data) {
         //Optional fields
-        String company = normalizer.safeTrim(data.getCompany());
-        String address2 = normalizer.safeTrim(data.getAddress2());
+        String company = TextNormalizer.safeTrim(data.getCompany());
+        String address2 = TextNormalizer.safeTrim(data.getAddress2());
         if (!company.isBlank()) {
             enterText(companyInput, company);
         }
@@ -91,9 +88,9 @@ public class CreateAccountPage extends BasePage {
 
 
     private void setDateOfBirth(AccountRegistrationData data) {
-        String day = normalizer.safeTrim(data.getBirthDay());
-        String month = normalizer.safeTrim(data.getBirthMonth());
-        String year = normalizer.safeTrim(data.getBirthYear());
+        String day = TextNormalizer.safeTrim(data.getBirthDay());
+        String month = TextNormalizer.safeTrim(data.getBirthMonth());
+        String year = TextNormalizer.safeTrim(data.getBirthYear());
 
         if (day.isBlank() && month.isBlank() && year.isBlank()) {
             return;
@@ -106,7 +103,7 @@ public class CreateAccountPage extends BasePage {
 
     private void setTitle(AccountRegistrationData data) {
         String title = titleResolver(data);
-        if (title.equalsIgnoreCase(skipSignal)) {
+        if (title.equalsIgnoreCase(titleNotProvided)) {
             return;
         }
         switch (title) {
@@ -117,9 +114,9 @@ public class CreateAccountPage extends BasePage {
     }
 
     private String titleResolver(AccountRegistrationData data) {
-        String title = normalizer.normalizeText(data.getTitle());
+        String title = TextNormalizer.normalizeText(data.getTitle());
         if (title.isBlank()) {
-            return skipSignal;
+            return titleNotProvided;
         }
         switch (title) {
             case "mr", "mrs" -> {

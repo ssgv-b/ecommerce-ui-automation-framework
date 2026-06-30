@@ -17,12 +17,9 @@ public class Footer extends BaseComponent{
 
 
     public void enterFooterEmailAndSubscribe(String email) {
+        scrollToFooter();
         enterTextNoClearing(subscriptionInput, email);
         click(subscribeButton);
-    }
-
-    public String getSubscribeFooterTitleText() {
-        return getTextWhenVisible(subscribeFooterTitle);
     }
 
     public String getSubscribeSuccessMessageText() {
@@ -31,9 +28,5 @@ public class Footer extends BaseComponent{
 
     public void scrollToFooter() {
         waitAndScrollToElement(footerSection);
-    }
-
-    public By getFooterSection() {
-        return footerSection;
     }
 }
