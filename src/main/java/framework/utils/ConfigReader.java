@@ -47,7 +47,7 @@ public class ConfigReader {
                 System.getProperty(TEST_ENV_PROPERTY),
                 System.getenv(TEST_ENV_VARIABLE)
         );
-        if (selectedEnv == null) {
+        if (selectedEnv == null || selectedEnv.equalsIgnoreCase("local")) {
             return DEFAULT_CONFIG_FILE;
         }
 

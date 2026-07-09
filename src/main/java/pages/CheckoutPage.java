@@ -35,7 +35,7 @@ public class CheckoutPage extends BasePage {
     }
 
     private Address getCheckoutAddress(By addressType) {
-        WebElement address = driver.findElement(addressType);
+        WebElement address = waitForVisibleElement(addressType);
         String name = address.findElement(addressName).getText();
         String street = getNormalizedStreetAddress(address);
         String cityStateZip = address.findElement(addressCityStateZip).getText();

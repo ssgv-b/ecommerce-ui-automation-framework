@@ -18,6 +18,11 @@ public class TestFlows {
         return productsPage.getNavBar().navigateToCart();
     }
 
+    public CartPage addAllProductsAndGoToCart(ProductsPage productsPage) {
+        productsPage.addAllProductsToCart();
+        return productsPage.getNavBar().navigateToCart();
+    }
+
     public OrderPlacedPage placeOrderFromCheckoutAsLoggedInUser(CheckoutPage checkoutPage, String comment, CreditCardDetailsData data) {
         checkoutPage.enterOrderComment(comment);
         PaymentPage paymentPage = checkoutPage.placeOrder();

@@ -78,7 +78,7 @@
         <testng.parallel>none</testng.parallel>
         <testng.threadCount>1</testng.threadCount>
         <testng.dataProviderThreadCount>1</testng.dataProviderThreadCount>
-        <test.env>local</test.env>
+        <test.env></test.env>
         <browser>chrome</browser>
         <headless>false</headless>
         <baseUrl>https://automationexercise.com</baseUrl>
@@ -111,6 +111,17 @@
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-testng</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.18</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.5.37</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

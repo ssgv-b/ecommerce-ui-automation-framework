@@ -54,6 +54,15 @@ public class DriverFactory {
         options.addArguments("--disable-save-password-bubble");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
+        options.addArguments(
+                "--host-resolver-rules=" +
+                        "MAP *.googlesyndication.com ~NOTFOUND, " +
+                        "MAP *.doubleclick.net ~NOTFOUND, " +
+                        "MAP *.adservice.google.com ~NOTFOUND, " +
+                        "MAP *.googletagmanager.com ~NOTFOUND, " +
+                        "MAP *.google-analytics.com ~NOTFOUND"
+        );
+        options.addArguments("--host-rules=MAP *.googlesyndication.com ~NOTFOUND");
 
         Map<String, Object> prefs = new HashMap<>();
         // set download prefs

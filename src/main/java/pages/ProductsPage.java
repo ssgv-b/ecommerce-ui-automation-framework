@@ -30,13 +30,14 @@ public class ProductsPage extends BasePage {
     private final By searchedProductsTitle = By.xpath("//h2[contains (text(), 'Searched Products')]");
     private final By continueShoppingButton = By.cssSelector(".btn-success");
     private final By addToCartButton = By.xpath(".//a[contains (text(),'Add to cart')]");
+    private final By addToCartButtonOverlay = By.xpath("//div[@class='product-overlay']//a");
     private final By productsTitle = By.xpath("//h2[@class='title text-center']");
     public final CategoryFilterComponent category;
     public final BrandFilterComponent brand;
 
     private WebElement findProductCardByName(String productName) {
         waitForVisibleElement(productNameLocator);
-        List <WebElement> products = driver.findElements(productCards);
+        List <WebElement> products = findElements(productCards);
         String normalizedTarget = TextNormalizer.normalizeText(productName);
         return products.stream().filter(p ->
                 TextNormalizer.normalizeText(p.findElement(productNameLocator).getText()).equals(normalizedTarget))
@@ -50,7 +51,7 @@ public class ProductsPage extends BasePage {
     }
 
     public void addProductsToCart(int count) {
-        List<WebElement> products = driver.findElements(productCards);
+        List<WebElement> products = findElements(productCards);
         if (count == 0) {
             return;
         }
@@ -60,11 +61,24 @@ public class ProductsPage extends BasePage {
         int actualCount = Math.min(count, products.size());
         for (int i=0; i < actualCount; i++) {
             WebElement product = products.get(i);
-            product.findElement(addToCartButton).click();
+            WebElement button = product.findElement(addToCartButton);
+            click(button);
             waitForVisibleElement(continueShoppingButton);
             click(continueShoppingButton);
         }
 
+    }
+
+    public void addAllProductsToCart() {
+        List<WebElement> products = findElements(productCards);
+        if (products.isEmpty()) {
+            return;
+        }
+        for (WebElement product : products) {
+            click(product.findElement(addToCartButton));
+            waitForVisibleElement(continueShoppingButton);
+            click(continueShoppingButton);
+        }
     }
 
     public ProductDetailsPage viewSingleProduct(String productName) {
@@ -91,12 +105,12 @@ public class ProductsPage extends BasePage {
     }
 
     public Set<String> getAllSearchProductNames() {
-       List <WebElement> results =  driver.findElements(productNameLocator);
+       List <WebElement> results =  findElements(productNameLocator);
        return results.stream().map(WebElement::getText).map(TextNormalizer::normalizeText).collect(Collectors.toSet());
     }
 
     public String getFirstSearchProductName() {
-        List<WebElement> results = driver.findElements(productCards);
+        List<WebElement> results = findElements(productCards);
         return results.stream()
                 .map(e -> e.findElement(productNameLocator).getText())
                 .findFirst()
