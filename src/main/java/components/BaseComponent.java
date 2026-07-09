@@ -8,6 +8,7 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.List;
 
 
 public class BaseComponent {
@@ -15,7 +16,7 @@ public class BaseComponent {
     protected final WebDriver driver;
     protected final WebDriverWait wait;
 
-    private static final Logger log = LoggerFactory.getLogger(BaseComponent.class);
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     public BaseComponent(DriverContext driverContext) {
         this.driverContext = driverContext;
@@ -29,11 +30,15 @@ public class BaseComponent {
             element.click();
         } catch (ElementClickInterceptedException e) {
             log.warn("Unable to click on element, retrying.");
-            waitAndScrollToElement(locator);
-            element.click();
+           WebElement updatedElement =  waitAndScrollToElement(locator);
+            updatedElement.click();
         }
 
     }
+    protected void click(WebElement element) {
+        wait.until(ExpectedConditions.elementToBeClickable(element)).click();
+    }
+
     protected void selectByVisibleText(By locator, String value) {
         WebElement element = waitForClickable(locator);
         Select select = new Select(element);
@@ -61,6 +66,11 @@ public class BaseComponent {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
+    protected List<WebElement> waitForElements (By locator) {
+        log.debug("Waiting for elements to be visible: {}", locator);
+        return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(locator));
+    }
+
     protected boolean waitAndVerifyElementInvisibility(By locator) {
         log.debug("Waiting for invisibility of element: {}", locator);
         return wait.until(ExpectedConditions.invisibilityOfElementLocated(locator));
@@ -82,6 +92,10 @@ public class BaseComponent {
     protected WebElement waitForClickable(By locator) {
         log.debug("Waiting for element to be clickable: {}", locator);
         return wait.until(ExpectedConditions.elementToBeClickable(locator));
+    }
+
+    protected List<WebElement> findElements(By locator) {
+        return driver.findElements(locator);
     }
 
 }

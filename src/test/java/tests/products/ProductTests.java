@@ -111,7 +111,7 @@ public class ProductTests extends BaseTest {
         ProductsPage productsPage = flows.openProductsPage();
         productsPage.searchProduct(SEARCH_PRODUCTS_VALUE);
         Set <String> searchResults = productsPage.getAllSearchProductNames();
-        CartPage cartPage = flows.addProductsAndGoToCart(productsPage, 5);
+        CartPage cartPage = flows.addAllProductsAndGoToCart(productsPage);
         List <CartItem> items = cartPage.readCartItems();
         Set<String> cartProductNames = items.stream()
                 .map(CartItem::getProductName)

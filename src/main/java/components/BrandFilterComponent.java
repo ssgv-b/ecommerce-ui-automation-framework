@@ -22,7 +22,7 @@ public class BrandFilterComponent extends BaseComponent{
         WebElement selectedBrand = brands.stream().filter(b-> TextNormalizer.normalizeText(b.getText())
                 .equals(normalizedTarget)).findFirst().orElseThrow(()->new RuntimeException("Brand "+normalizedTarget+" not found."));
         waitAndScrollToElement(brandsFilter);
-        selectedBrand.click();
+        click(selectedBrand);
         return new ProductsPage(driverContext);
     }
 
