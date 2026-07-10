@@ -20,7 +20,7 @@ public class LoginTests extends BaseTest {
     @Test(retryAnalyzer = RetryAnalyzer.class, groups = {"regression", "auth", "destructive", "slow"})
     public void registerUserAndDelete() {
         UserIdentityData userData = UserIdentityDataFactory.newUniqueUser();
-        AccountRegistrationData registrationData = AccountRegistrationTestDataFactory.validRegistrationUserFemale();
+        AccountRegistrationData registrationData = AccountRegistrationTestDataFactory.validRegistrationUserMale();
         testUser = new TestUser(registrationData, userData);
         HomePage homePage = null;
 
@@ -53,28 +53,32 @@ public class LoginTests extends BaseTest {
         Assert.assertEquals(errorMessage, INVALID_LOGIN_ERROR);
     }
 
-    @Test(groups = {"regression", "auth", "non_destructive", "fast"})
-    public void logInAccountAndLogOut() {
-        UserIdentityData userDataExistingUser = UserIdentityDataFactory.existingSeededUser();
-        HomePage homePage = flows.loginAsExistingUser(userDataExistingUser);
-        TestAssertions.assertLoggedInUser(homePage, userDataExistingUser);
-        homePage.getNavBar().logOut();
-    }
-
-    @Test(groups = {"regression", "auth", "negative", "non_destructive", "fast"})
+    @Test(groups = {"regression", "auth", "negative", "destructive", "slow"})
     public void registerUserWithExistingEmail() {
-        LoginPage loginPage = flows.openLoginPage();
-        UserIdentityData existingEmailUserData = UserIdentityDataFactory.invalidUser();
-        loginPage.createAccount(existingEmailUserData);
-        String errorMessage = loginPage.getExistingEmailErrorMessage();
-        Assert.assertEquals(errorMessage, EXISTING_EMAIL_ERROR);
+        HomePage homePage = null;
+        try {
+            LoginPage loginPage = flows.registerAndLogOut(testUser);
+            loginPage.createAccount(testUser.getIdentity());
+            String errorMessage = loginPage.getExistingEmailErrorMessage();
+            Assert.assertEquals(errorMessage, EXISTING_EMAIL_ERROR);
+
+            homePage = loginPage.logInAccount(testUser.getIdentity());
+            TestAssertions.deleteAccountAndAssertHomePage(homePage);
+            homePage = null;
+        } finally {
+            AccountCleanupHelper.deleteAccountIfPossible(homePage);
+        }
     }
 
     @Test(groups = {"regression", "auth", "destructive", "slow"})
     public void createAccountAndLogOut() {
         LoginPage loginPage = flows.openLoginPage();
-        HomePage homePage = flows.registerAndContinueToHomePage(loginPage,testUser);
+        HomePage homePage = flows.registerAndContinueToHomePage(loginPage, testUser);
         TestAssertions.assertLoggedInUser(homePage, testUser.getIdentity());
-        homePage.getNavBar().logOut();
+        LoginPage loggedOutPage = homePage.getNavBar().logOut();
+
+        // Clean up the account created above so it is not orphaned on the shared site.
+        HomePage reloggedHomePage = loggedOutPage.logInAccount(testUser.getIdentity());
+        TestAssertions.deleteAccountAndAssertHomePage(reloggedHomePage);
     }
 }

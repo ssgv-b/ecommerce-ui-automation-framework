@@ -16,7 +16,7 @@ import java.util.List;
 public class CartPage extends BasePage {
     public CartPage(DriverContext driverContext) {
         super(driverContext);
-        By cartPageSignal = By.xpath("//section[@id='do_action']");
+        By cartPageSignal = By.xpath("//section[@id='cart_items']");
         waitForVisibleElement(cartPageSignal);
     }
 

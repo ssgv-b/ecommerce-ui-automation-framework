@@ -15,14 +15,6 @@ public class UserIdentityDataFactory {
         return builder.build();
     }
 
-    public static UserIdentityData existingSeededUser() {
-        UserIdentityData.Builder builder = UserIdentityData.builder();
-        builder.userName("existinguser");
-        builder.userEmail("existing@user.com");
-        builder.userPassword("ExistingUser123$");
-        return builder.build();
-    }
-
     private static String generateUniqueSuffix() {
        UUID uniquePart = UUID.randomUUID();
        return uniquePart.toString().replace("-","").substring(0,5);
@@ -31,7 +23,7 @@ public class UserIdentityDataFactory {
     public static UserIdentityData invalidUser() {
         UserIdentityData.Builder builder = UserIdentityData.builder();
         builder.userName("invalidUser");
-        builder.userEmail("222");
+        builder.userEmail("emailUser@ggg.com");
         builder.userPassword("invalidPass123$");
         return builder.build();
     }

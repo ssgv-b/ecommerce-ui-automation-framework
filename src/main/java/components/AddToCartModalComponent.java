@@ -23,7 +23,8 @@ public class AddToCartModalComponent extends BaseComponent{
     }
 
     public CartPage goToCart() {
-        scopeToModal().findElement(goToCartBtn).click();
+        continueShopping();
+        click(goToCartBtn);
         return new CartPage(driverContext);
     }
 }

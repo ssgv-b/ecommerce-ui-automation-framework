@@ -79,19 +79,28 @@ public class PlaceOrderTests extends BaseTest {
         }
     }
 
-    @Test(groups = {"smoke", "regression", "order", "checkout", "critical_path", "slow"})
+    @Test(groups = {"smoke", "regression", "order", "checkout", "critical_path", "destructive", "slow"})
     public void userCanPlaceAnOrderAfterLoginToExistingAccount() {
-        UserIdentityData userDataExistingUser = UserIdentityDataFactory.existingSeededUser();
-        HomePage homePage = flows.loginAsExistingUser(userDataExistingUser);
-        TestAssertions.assertLoggedInUser(homePage, userDataExistingUser);
+        HomePage homePage = null;
+        try {
+            LoginPage loginPage = flows.registerAndLogOut(testUser);
+            homePage = loginPage.logInAccount(testUser.getIdentity());
+            TestAssertions.assertLoggedInUser(homePage, testUser.getIdentity());
 
-        ProductsPage productsPage = homePage.getNavBar().navigateToProducts();
-        CartPage cartPage = flows.addProductsAndGoToCart(productsPage, 2);
-        CheckoutPage checkoutPage = cartPage.goToCheckoutLoggedIn();
-        assertDeliveryAndInvoiceAddressesMatch(checkoutPage);
-        CreditCardDetailsData cardData = CreditCardDetailsDataFactory.additionalValidCreditCardDetails();
-        OrderPlacedPage orderPlacedPage = flows.placeOrderFromCheckoutAsLoggedInUser(checkoutPage, ORDER_COMMENT, cardData);
-        Assert.assertEquals(orderPlacedPage.getOrderSuccessMessage(), ORDER_SUCCESS_MESSAGE);
+            ProductsPage productsPage = homePage.getNavBar().navigateToProducts();
+            CartPage cartPage = flows.addProductsAndGoToCart(productsPage, 2);
+            CheckoutPage checkoutPage = cartPage.goToCheckoutLoggedIn();
+            assertDeliveryAndInvoiceAddressesMatch(checkoutPage);
+            CreditCardDetailsData cardData = CreditCardDetailsDataFactory.additionalValidCreditCardDetails();
+            OrderPlacedPage orderPlacedPage = flows.placeOrderFromCheckoutAsLoggedInUser(checkoutPage, ORDER_COMMENT, cardData);
+            Assert.assertEquals(orderPlacedPage.getOrderSuccessMessage(), ORDER_SUCCESS_MESSAGE);
+
+            homePage = orderPlacedPage.continueShopping();
+            TestAssertions.deleteAccountAndAssertHomePage(homePage);
+            homePage = null;
+        } finally {
+            AccountCleanupHelper.deleteAccountIfPossible(homePage);
+        }
     }
 
     @Test(groups = {"regression", "order", "checkout", "download", "data_integrity", "destructive", "slow"})
