@@ -2,7 +2,6 @@ package components;
 
 import framework.drivers.DriverContext;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import pages.*;
 
 public class NavBar extends BaseComponent{
@@ -11,14 +10,14 @@ public class NavBar extends BaseComponent{
         super(driverContext);
     }
 
-    private By cartLink = By.xpath("//a[normalize-space()='Cart']");
-    private By homeLink = By.xpath("//a[normalize-space()='Home']");
-    private By productsLink = By.xpath("//a[@href='/products']");
-    private By signUpLoginLink = By.xpath("//a[@href='/login']");
-    private By contactUsLink = By.xpath("//a[@href='/contact_us']");
-    private By deleteAccountLink = By.cssSelector("a[href='/delete_account']");
-    private By testCasesLink = By.xpath("//a[@href='/test_cases']");
-    private By logoutLink = By.cssSelector("a[href='/logout']");
+    private final By cartLink = By.xpath("//a[@href='/view_cart']");
+    private final By homeLink = By.xpath("//a[normalize-space()='Home']");
+    private final By productsLink = By.xpath("//a[@href='/products']");
+    private final By signUpLoginLink = By.xpath("//a[@href='/login']");
+    private final By contactUsLink = By.xpath("//a[@href='/contact_us']");
+    private final By deleteAccountLink = By.cssSelector("a[href='/delete_account']");
+    private final By testCasesLink = By.xpath("//a[@href='/test_cases']");
+    private final By logoutLink = By.cssSelector("a[href='/logout']");
 
     public HomePage navigateToHome() {
         click(homeLink);

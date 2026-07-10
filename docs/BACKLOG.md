@@ -28,12 +28,22 @@ Legend: ✅ done · 🔶 in progress · ⬜ not started
 
 **Follow-up nits (optional, not blocking):** `logback-test.xml` has no trailing newline; nothing you own logs at `INFO`, so `WARN` root only surfaces retry/quit warnings while the DEBUG package loggers light up the wait tracing — intended.
 
-### ECF-102 · Remove hard dependency on shared seeded account — ⬜
+### ECF-102 · Remove hard dependency on shared seeded account — ✅ DONE
 **Branch:** `refactor/seeded-user-independence`
 **Problem:** `existingSeededUser` (`existing@user.com`) is a hardcoded account on a public, shared site; anyone can delete it and `destructive` tests delete accounts. One collision reds the whole group.
-**Scope (non-API interim):** Tests needing a logged-in user register their own throwaway account in setup and clean it up in teardown. Keep a documented "known user" only where genuinely unavoidable.
-**Note:** Full fix (provision/reset via API in a suite fixture) is blocked on deferred API work — leave a `// TODO ECF-API` marker.
-**Done when:** No test fails if `existing@user.com` doesn't pre-exist on the site.
+**Delivered:**
+- Added `TestFlows.registerAndLogOut(TestUser)` — provisions a fresh account and returns to the logged-out login page, so login-to-existing scenarios run against a self-owned account.
+- Transformed all 4 seeded-user tests to self-provision the per-method unique `testUser` and delete it (try/finally + `AccountCleanupHelper`):
+  - `PlaceOrderTests.userCanPlaceAnOrderAfterLoginToExistingAccount`
+  - `ProductTests.userCartIsPreservedAfterLogin`
+  - `LoginTests.registerUserWithExistingEmail`
+- Removed `LoginTests.logInAccountAndLogOut` (redundant with `createAccountLoginAndDelete` once self-provisioned).
+- Fixed `LoginTests.createAccountAndLogOut` orphan leak — now logs back in and deletes the account.
+- Removed `UserIdentityDataFactory.existingSeededUser()` and the now-dead `TestFlows.loginAsExistingUser()`.
+- Reclassified affected tests from `non_destructive`/`fast` → `destructive`/`slow` (they now create + delete accounts).
+- Verified: `LoginTests` (5/5) + both critical-path transforms pass headless against the live site.
+
+**Known limitation (accepted):** If a test fails *after* provisioning but *before* it logs in, the fresh account can orphan (the finally-cleanup needs a logged-in `HomePage`). Unique emails prevent collisions, so this is tolerable; a future identity-based cleanup (log in by identity, then delete) would close it — revisit alongside the API work.
 
 ### ECF-103 · Fix unique-suffix collision risk — ⬜
 **Branch:** `fix/unique-user-suffix`

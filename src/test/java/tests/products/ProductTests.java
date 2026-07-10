@@ -2,11 +2,11 @@ package tests.products;
 
 
 import framework.base.BaseTest;
-import framework.testdata.UserIdentityDataFactory;
+import framework.helpers.AccountCleanupHelper;
+import framework.utils.TestAssertions;
 import framework.utils.TextNormalizer;
 import models.CartItem;
 import models.ProductDetails;
-import models.UserIdentityData;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.*;
@@ -106,29 +106,38 @@ public class ProductTests extends BaseTest {
         Assert.assertEquals(productsPage.getProductResultTitle(),POLO_BRAND);
     }
 
-    @Test(groups = {"regression", "products", "cart", "auth", "critical_path", "slow"})
+    @Test(groups = {"regression", "products", "cart", "auth", "critical_path", "destructive", "slow"})
     public void userCartIsPreservedAfterLogin() {
-        ProductsPage productsPage = flows.openProductsPage();
-        productsPage.searchProduct(SEARCH_PRODUCTS_VALUE);
-        Set <String> searchResults = productsPage.getAllSearchProductNames();
-        CartPage cartPage = flows.addAllProductsAndGoToCart(productsPage);
-        List <CartItem> items = cartPage.readCartItems();
-        Set<String> cartProductNames = items.stream()
-                .map(CartItem::getProductName)
-                .map(TextNormalizer::normalizeText)
-                .collect(Collectors.toSet());
-        Assert.assertEquals(cartProductNames,searchResults);
+        HomePage homePage = null;
+        try {
+            // Provision a fresh account, then browse anonymously before logging in.
+            LoginPage provisionedLoginPage = flows.registerAndLogOut(testUser);
+            ProductsPage productsPage = provisionedLoginPage.getNavBar().navigateToProducts();
+            productsPage.searchProduct(SEARCH_PRODUCTS_VALUE);
+            Set<String> searchResults = productsPage.getAllSearchProductNames();
+            CartPage cartPage = flows.addAllProductsAndGoToCart(productsPage);
+            List<CartItem> items = cartPage.readCartItems();
+            Set<String> cartProductNames = items.stream()
+                    .map(CartItem::getProductName)
+                    .map(TextNormalizer::normalizeText)
+                    .collect(Collectors.toSet());
+            Assert.assertEquals(cartProductNames, searchResults);
 
-        LoginPage loginPage = cartPage.getNavBar().navigateToLogin();
-        UserIdentityData userDataExistingUser = UserIdentityDataFactory.existingSeededUser();
-        HomePage homePage = loginPage.logInAccount(userDataExistingUser);
-        cartPage = homePage.getNavBar().navigateToCart();
-        List <CartItem> itemsAfterLogin = cartPage.readCartItems();
-        Set <String> cartProductNamesAfterLogin = itemsAfterLogin.stream()
-                .map(CartItem::getProductName)
-                .map(TextNormalizer::normalizeText)
-                .collect(Collectors.toSet());
-        Assert.assertEquals(cartProductNamesAfterLogin,searchResults);
+            LoginPage loginPage = cartPage.getNavBar().navigateToLogin();
+            homePage = loginPage.logInAccount(testUser.getIdentity());
+            cartPage = homePage.getNavBar().navigateToCart();
+            List<CartItem> itemsAfterLogin = cartPage.readCartItems();
+            Set<String> cartProductNamesAfterLogin = itemsAfterLogin.stream()
+                    .map(CartItem::getProductName)
+                    .map(TextNormalizer::normalizeText)
+                    .collect(Collectors.toSet());
+            Assert.assertEquals(cartProductNamesAfterLogin, searchResults);
+
+            TestAssertions.deleteAccountAndAssertHomePage(homePage);
+            homePage = null;
+        } finally {
+            AccountCleanupHelper.deleteAccountIfPossible(homePage);
+        }
     }
 
     @Test(groups = {"regression", "products", "destructive", "slow"})

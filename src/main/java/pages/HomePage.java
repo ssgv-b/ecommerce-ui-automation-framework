@@ -56,7 +56,7 @@ public class HomePage extends BasePage {
         String normalizedTarget = TextNormalizer.normalizeText(productName);
          return carouselItems.stream().filter(c->TextNormalizer.normalizeText(c.findElement(carouselProductName)
                 .getText()).equals(normalizedTarget)).findFirst()
-                .orElseThrow(()->new RuntimeException("Carousel with name "+productName+" not found!"));
+                .orElseThrow(()-> new RuntimeException("Carousel with name " + productName + " not found!"));
     }
     public void addRecommendedProductToCart(String productName) {
         goToCarouselSection();

@@ -44,7 +44,7 @@ public class AccountRegistrationTestDataFactory {
     public static AccountRegistrationData validRegistrationUserFemale() {
         AccountRegistrationData.Builder builder = AccountRegistrationData.builder();
         builder.title("Mrs");
-        builder.birthDay("03");
+        builder.birthDay("23");
         builder.birthMonth("November");
         builder.birthYear("1988");
         builder.newsLetterSignUp(true);

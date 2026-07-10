@@ -42,6 +42,17 @@ public class TestFlows {
         return accountCreatedPage.continueToHomePage();
     }
 
+    /**
+     * Provisions a fresh account for the given user and returns to a logged-out
+     * state on the login page. Lets a test exercise a login-to-existing-account
+     * scenario against a self-owned account instead of a shared seeded one.
+     */
+    public LoginPage registerAndLogOut(TestUser testUser) {
+        LoginPage loginPage = openLoginPage();
+        HomePage homePage = registerAndContinueToHomePage(loginPage, testUser);
+        return homePage.getNavBar().logOut();
+    }
+
     public HomePage openHomePage() {
         HomePage homePage = new HomePage(driverContext);
         homePage.assertOnHomePage();
@@ -51,11 +62,6 @@ public class TestFlows {
     public ProductsPage openProductsPage() {
         HomePage homePage = openHomePage();
         return homePage.getNavBar().navigateToProducts();
-    }
-
-    public HomePage loginAsExistingUser(UserIdentityData identity) {
-        LoginPage loginPage = openLoginPage();
-        return loginPage.logInAccount(identity);
     }
 
     public CreateAccountPage beginUserRegistration(UserIdentityData identity) {

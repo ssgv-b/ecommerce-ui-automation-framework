@@ -11,6 +11,7 @@ public class LoginPage extends BasePage {
         By loginPageSignal = By.xpath("//div[@class='login-form']");
         waitForVisibleElement(loginPageSignal);
     }
+
     private final By loginEmailInput = By.xpath("//input[@data-qa='login-email']");
     private final By loginPasswordInput = By.xpath("//input[@data-qa='login-password']");
     private final By loginButton = By.xpath("//button[@data-qa='login-button']");
