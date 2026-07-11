@@ -8,16 +8,15 @@ public class UserIdentityDataFactory {
 
     public static UserIdentityData newUniqueUser() {
         UserIdentityData.Builder builder = UserIdentityData.builder();
-        String userSuffix = generateUniqueSuffix();
-        builder.userName("newtestuser_" +userSuffix);
-        builder.userEmail("newtestuser_" +userSuffix+ "@factory.com");
+        String uniqueUserSuffix = generateUniqueSuffix();
+        builder.userName("newtestuser_" + uniqueUserSuffix);
+        builder.userEmail("newtestuser_" + uniqueUserSuffix + "@factory.com");
         builder.userPassword("SecurePass123$");
         return builder.build();
     }
 
     private static String generateUniqueSuffix() {
-       UUID uniquePart = UUID.randomUUID();
-       return uniquePart.toString().replace("-","").substring(0,5);
+        return UUID.randomUUID().toString().replace("-","");
     }
 
     public static UserIdentityData invalidUser() {
