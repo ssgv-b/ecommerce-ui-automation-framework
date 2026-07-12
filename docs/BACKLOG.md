@@ -51,11 +51,22 @@ Legend: ✅ done · 🔶 in progress · ⬜ not started
 **Scope:** Use the full UUID (or `timestamp + threadId`) for email/username generation.
 **Done when:** A stress run (~100 rapid registrations across 3 threads) produces zero duplicate-email failures.
 
-### ECF-104 · Decouple tests from brittle catalog data — ⬜
-**Branch:** `refactor/externalize-product-expectations`
+### ECF-104 · Decouple tests from brittle catalog data — ✅ DONE
+**Branch:** `refactor/externalize-product-expectations-and-details`
 **Problem:** `ProductTests` asserts exact literals (`Rs. 400`, `H&M`, `Men > Tshirts`); catalog changes fail tests for unrelated reasons.
-**Scope:** Move expected product fixtures to a constants/data source; pin assertions to the most stable products; document which products are treated as stable fixtures.
-**Done when:** Expected values live in one place, not inline across test methods.
+**Delivered:**
+- Added `constants/Product` enum — 34 products with name + price; `MEN_TSHIRT` carries the full 6-field detail via a chained constructor; all fields `final`.
+- Added `ProductTextParser.parsePrice` (`String → BigDecimal`, currency-prefix agnostic); reused in `CartPage` and `ProductDetailsPage`, removing duplicated price stripping.
+- `ProductDetails` and `CartItem` model prices as `BigDecimal`.
+- Fixed `CartPage.readCartItems` to scope every field read to its row (rows 2+ were picking up row 1's price/quantity/total).
+- Split cart-row lookup into a waiting variant (`getCurrentCartItems`, for readers that expect rows) and a non-waiting snapshot (`getCartItems` → `findElements`, for `clearCart`) so clearing no longer burns the wait timeout on the empty check.
+- Prices compared with `compareTo(...) == 0` (scale-insensitive) with a value-carrying failure message.
+- Removed dead `addToCartButtonOverlay` locator; `.gitignore` ignores `CLAUDE.md`.
+
+**Deferred to their own branches:**
+- Split categories/brands into a separate enum (still magic strings in `ProductTests`).
+- Remaining `ProductTests` reworks.
+- `Optional` for the nullable detail getters — nulls are load-bearing but contained to non-`MEN_TSHIRT` constants; promote the four detail fields into a grouped optional bundle if/when a second product needs full detail.
 
 ### ECF-105 · Fix `enterText` clear semantics + remove duplicate — ⬜
 **Branch:** `fix/entertext-clear-semantics`

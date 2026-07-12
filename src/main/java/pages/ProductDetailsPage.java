@@ -7,6 +7,8 @@ import models.ProductDetails;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import java.math.BigDecimal;
+
 public class ProductDetailsPage extends BasePage {
     public ProductDetailsPage(DriverContext driverContext) {
         super(driverContext);
@@ -30,10 +32,9 @@ public class ProductDetailsPage extends BasePage {
 
 
     public ProductDetails getProductDetails() {
-        waitForVisibleElement(productName);
         String name = getTextWhenVisible(productName);
         String category = ProductTextParser.parseTextAndTrim(getTextWhenVisible(productCategory));
-        String price = getTextWhenVisible(productPrice).trim();
+        BigDecimal price = ProductTextParser.parsePrice(getTextWhenVisible(productPrice));
         String availability = ProductTextParser.parseTextAndTrim(getTextWhenVisible(productAvailability));
         String condition = ProductTextParser.parseTextAndTrim(getTextWhenVisible(productCondition));
         String brand = ProductTextParser.parseTextAndTrim(getTextWhenVisible(productBrand));

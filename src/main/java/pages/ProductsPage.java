@@ -30,7 +30,6 @@ public class ProductsPage extends BasePage {
     private final By searchedProductsTitle = By.xpath("//h2[contains (text(), 'Searched Products')]");
     private final By continueShoppingButton = By.cssSelector(".btn-success");
     private final By addToCartButton = By.xpath(".//a[contains (text(),'Add to cart')]");
-    private final By addToCartButtonOverlay = By.xpath("//div[@class='product-overlay']//a");
     private final By productsTitle = By.xpath("//h2[@class='title text-center']");
     public final CategoryFilterComponent category;
     public final BrandFilterComponent brand;

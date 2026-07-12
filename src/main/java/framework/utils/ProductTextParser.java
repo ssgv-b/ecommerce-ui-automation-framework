@@ -3,8 +3,13 @@ package framework.utils;
 import java.math.BigDecimal;
 
 public class ProductTextParser {
-    public static BigDecimal parseBigDecimal(String priceValue) {
-        return new BigDecimal(priceValue);
+
+    private ProductTextParser() {
+    }
+    private static final String CURRENCY_PREFIX = "Rs.";
+
+    public static BigDecimal parsePrice(String priceValue) {
+        return new BigDecimal(priceValue.replace(CURRENCY_PREFIX, "").trim());
     }
 
     public static String parseTextAndTrim(String inputString) {
@@ -15,6 +20,4 @@ public class ProductTextParser {
         // Otherwise just strip "Word: " prefix
         return inputString.replaceAll("^\\w+:\\s+", "").trim();
     }
-
-
 }
