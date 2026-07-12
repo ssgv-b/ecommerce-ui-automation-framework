@@ -1,6 +1,7 @@
 package tests.products;
 
 
+import constants.Product;
 import framework.base.BaseTest;
 import framework.helpers.AccountCleanupHelper;
 import framework.utils.TestAssertions;
@@ -12,14 +13,10 @@ import org.testng.annotations.Test;
 import pages.*;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ProductTests extends BaseTest {
-    private static final String MEN_TSHIRT = "Men Tshirt";
-    private static final String BLUE_TOP = "Blue Top";
-    private static final String SLEEVELESS_DRESS = "Sleeveless Dress";
     private static final String MEN_CATEGORY = "Men";
     private static final String JEANS_SUBCATEGORY = "Jeans";
     private static final String WOMEN_CATEGORY = "Women";
@@ -32,34 +29,45 @@ public class ProductTests extends BaseTest {
 
     @Test(groups = {"smoke", "regression", "products", "non_destructive", "fast"})
     public void userCanViewProductDetailsFromProductsPage() {
+        String productName = Product.MEN_TSHIRT.getProductName();
+        String productCategory = Product.MEN_TSHIRT.getCategories();
+        BigDecimal productPrice = Product.MEN_TSHIRT.getProductPrice();
+        String productCondition = Product.MEN_TSHIRT.getCondition();
+        String productAvailability = Product.MEN_TSHIRT.getAvailability();
+        String productBrand = Product.MEN_TSHIRT.getBrandName();
+
         ProductsPage productsPage = flows.openProductsPage();
-        ProductDetailsPage productDetailsPage =  productsPage.viewSingleProduct(MEN_TSHIRT);
+        ProductDetailsPage productDetailsPage =  productsPage.viewSingleProduct(productName);
         ProductDetails actual = productDetailsPage.getProductDetails();
 
-        Assert.assertEquals(actual.getName(), MEN_TSHIRT);
-        Assert.assertEquals(actual.getCategory(), "Men > Tshirts");
-        Assert.assertEquals(actual.getPrice(), "Rs. 400");
-        Assert.assertEquals(actual.getAvailability(), "In Stock");
-        Assert.assertEquals(actual.getCondition(), "New");
-        Assert.assertEquals(actual.getBrand(), "H&M");
+        Assert.assertEquals(actual.getName(), productName);
+        Assert.assertEquals(actual.getCategory(), productCategory);
+        Assert.assertEquals(actual.getPrice().compareTo(productPrice), 0, "Actual and expected product price are not the same. ");
+        Assert.assertEquals(actual.getAvailability(), productAvailability);
+        Assert.assertEquals(actual.getCondition(), productCondition);
+        Assert.assertEquals(actual.getBrand(), productBrand);
     }
 
     @Test(groups = {"smoke", "regression", "products", "non_destructive", "fast"})
     public void userCanSearchForProductByName() {
+        String productName = Product.BLUE_TOP.getProductName();
         ProductsPage productsPage = flows.openProductsPage();
-        productsPage.searchProduct(BLUE_TOP);
-        Assert.assertEquals(productsPage.getFirstSearchProductName(),BLUE_TOP);
+        productsPage.searchProduct(productName);
+        Assert.assertEquals(productsPage.getFirstSearchProductName(), productName);
     }
 
     @Test(groups = {"regression", "products", "cart", "data_integrity", "slow"})
     public void userCanAddMultipleProductsToCart() {
+        List<String> testProducts = Arrays.asList(Product.BLUE_TOP.getProductName(),
+                Product.MEN_TSHIRT.getProductName());
+
         ProductsPage productsPage = flows.openProductsPage();
-        CartPage cartPage = flows.addProductsAndGoToCart(productsPage,2);
+        CartPage cartPage = flows.addProductsAndGoToCart(productsPage,testProducts.size());
+        //Assert size, contents and price for each item
         List<CartItem> items = cartPage.readCartItems();
-        Assert.assertEquals(items.size(), 2);
+        Assert.assertEquals(items.size(), testProducts.size());
         List<String> names = items.stream().map(CartItem::getProductName).toList();
-        Assert.assertTrue(names.contains(BLUE_TOP));
-        Assert.assertTrue(names.contains(MEN_TSHIRT));
+        Assert.assertEquals(names, testProducts);
 
         for (CartItem item : items) {
             BigDecimal expectedTotal = item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
@@ -69,15 +77,18 @@ public class ProductTests extends BaseTest {
 
     @Test(groups = {"regression", "products", "cart", "data_integrity", "slow"})
     public void userCanAddMultipleQuantitiesOfProductToCart() {
-        Integer productQuantity = 4;
+        int productQuantity = 4;
+        String productName = Product.SLEEVELESS_DRESS.getProductName();
+        int productCount = 1;
+
         ProductsPage productsPage = flows.openProductsPage();
-        ProductDetailsPage productDetailsPage =  productsPage.viewSingleProduct(SLEEVELESS_DRESS);
+        ProductDetailsPage productDetailsPage =  productsPage.viewSingleProduct(productName);
         productDetailsPage.setProductQuantity(productQuantity);
         CartPage cartPage = productDetailsPage.addToCartAndGoToCart();
         List<CartItem> items = cartPage.readCartItems();
-        Assert.assertEquals(items.size(), 1);
+        Assert.assertEquals(items.size(), productCount);
         for (CartItem item : items) {
-            Assert.assertEquals(item.getProductName(), SLEEVELESS_DRESS);
+            Assert.assertEquals(item.getProductName(), productName);
             Assert.assertEquals(item.getQuantity(), productQuantity);
         }
     }
@@ -142,18 +153,20 @@ public class ProductTests extends BaseTest {
 
     @Test(groups = {"regression", "products", "destructive", "slow"})
     public void userCanAddReviewToProduct() {
+        String productName = Product.SLEEVELESS_DRESS.getProductName();
         ProductsPage productsPage = flows.openProductsPage();
-        ProductDetailsPage productDetailsPage = productsPage.viewSingleProduct(SLEEVELESS_DRESS);
+        ProductDetailsPage productDetailsPage = productsPage.viewSingleProduct(productName);
         productDetailsPage.addReviewToProduct("Reviewer", "test@review.com","Good product quality");
-        Assert.assertEquals(productDetailsPage.getReviewSubmissionConfirmation(),REVIEW_SUCCESS_MESSAGE);
+        Assert.assertEquals(productDetailsPage.getReviewSubmissionConfirmation(), REVIEW_SUCCESS_MESSAGE);
     }
 
     @Test(groups = {"regression", "products", "cart", "fast"})
     public void userCanAddRecommendedProductToCart() {
+        String productName = Product.SLEEVELESS_DRESS.getProductName();
         HomePage homePage = flows.openHomePage();
-        homePage.addRecommendedProductToCart(SLEEVELESS_DRESS);
+        homePage.addRecommendedProductToCart(productName);
         CartPage cartPage = homePage.modal.goToCart();
-        Assert.assertEquals(TextNormalizer.normalizeText(cartPage.getCartItemName()), TextNormalizer.normalizeText(SLEEVELESS_DRESS));
+        Assert.assertEquals(TextNormalizer.normalizeText(cartPage.getCartItemName()), TextNormalizer.normalizeText(productName));
     }
 
 }
