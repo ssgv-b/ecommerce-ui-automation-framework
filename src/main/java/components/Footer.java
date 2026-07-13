@@ -12,13 +12,12 @@ public class Footer extends BaseComponent{
     private final By footerSection = By.id("footer");
     private final By subscriptionInput = By.id("susbscribe_email");
     private final By subscribeButton = By.id("subscribe");
-    private final By subscribeFooterTitle = By.xpath("//div[@class='single-widget']/h2");
     private final By subscribeSuccessMessage = By.xpath("//div[@class='alert-success alert']");
 
 
     public void enterFooterEmailAndSubscribe(String email) {
         scrollToFooter();
-        enterTextNoClearing(subscriptionInput, email);
+        enterText(subscriptionInput, email);
         click(subscribeButton);
     }
 
