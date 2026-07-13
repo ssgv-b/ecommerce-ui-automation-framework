@@ -45,11 +45,11 @@ Legend: ✅ done · 🔶 in progress · ⬜ not started
 
 **Known limitation (accepted):** If a test fails *after* provisioning but *before* it logs in, the fresh account can orphan (the finally-cleanup needs a logged-in `HomePage`). Unique emails prevent collisions, so this is tolerable; a future identity-based cleanup (log in by identity, then delete) would close it — revisit alongside the API work.
 
-### ECF-103 · Fix unique-suffix collision risk — ⬜
-**Branch:** `fix/unique-user-suffix`
+### ECF-103 · Fix unique-suffix collision risk — ✅ DONE
+**Branch:** `fix/expand-unique-user-suffix` (merged, PR #7)
 **Problem:** `generateUniqueSuffix()` truncates a UUID to 5 hex chars (~1M space); birthday collisions under `parallel=classes` + retries surface as spurious "Email already exists".
-**Scope:** Use the full UUID (or `timestamp + threadId`) for email/username generation.
-**Done when:** A stress run (~100 rapid registrations across 3 threads) produces zero duplicate-email failures.
+**Delivered:** `generateUniqueSuffix()` now returns the full UUID (`UUID.randomUUID().toString().replace("-","")`) — no truncation, so the collision surface is eliminated by construction rather than probabilistically narrowed.
+**Note:** No stress-run artifact was committed; the full-UUID space makes the "zero duplicate-email failures" bar hold by construction.
 
 ### ECF-104 · Decouple tests from brittle catalog data — ✅ DONE
 **Branch:** `refactor/externalize-product-expectations-and-details`
@@ -68,21 +68,23 @@ Legend: ✅ done · 🔶 in progress · ⬜ not started
 - Remaining `ProductTests` reworks.
 - `Optional` for the nullable detail getters — nulls are load-bearing but contained to non-`MEN_TSHIRT` constants; promote the four detail fields into a grouped optional bundle if/when a second product needs full detail.
 
-### ECF-105 · Fix `enterText` clear semantics + remove duplicate — ⬜
+### ECF-105 · Fix `enterText` clear semantics + remove duplicate — ✅ DONE
 **Branch:** `fix/entertext-clear-semantics`
-**Problem:** `enterText()` and `enterTextNoClearing()` have identical bodies (neither clears). Name implies clear-then-type; edit flows will append.
-**Scope:** Make `enterText()` clear before typing. Keep `enterTextNoClearing()` only if a caller needs append; otherwise delete it. Audit call sites.
-**Done when:** `enterText` clears; the two methods are meaningfully different or the redundant one is gone.
+**Problem:** `enterText()` and `enterTextNoClearing()` had identical bodies (neither cleared). Name implies clear-then-type; edit / re-search flows would append.
+**Delivered:**
+- `enterText()` now calls `element.clear()` before `sendKeys(text)` — the name finally matches the behavior.
+- Audited all 28 `enterText` call sites (payment, registration, contact, login/signup, review, quantity, order comment, search): every one is empty-field-entry semantics, so clearing is safe everywhere and actively correct for `ProductsPage` search (repeated searches no longer concatenate).
+- `enterTextNoClearing()` had exactly one caller (`Footer.enterFooterEmailAndSubscribe`, also an empty field) — repointed it to `enterText` and deleted the redundant method. Zero lingering references; compiles clean.
+**Done when:** ✅ `enterText` clears; the redundant twin is gone.
 
 ---
 
 ## P2 — Medium
 
-### ECF-201 · Stand up CI pipeline — ⬜
+### ECF-201 · Stand up CI pipeline — ✅ DONE (core)
 **Branch:** `ci/github-actions`
-**Problem:** A `ci` Maven profile and `config-ci.properties` exist but nothing runs them.
-**Scope:** `.github/workflows/` running `mvn clean test -Pci` headless on push/PR; Chrome + Firefox matrix; publish Allure results and upload failure screenshots as artifacts.
-**Done when:** PRs get a green/red check plus downloadable Allure report + screenshots.
+**Delivered:** `.github/workflows/ci.yaml` (on `origin/main`) runs `mvn clean test -Pci` headless on push/PR to main, JDK 21 (temurin) + Maven cache, and uploads `target/allure-results` as an artifact with `if: "!cancelled()"`. PRs get a green/red check.
+**Remaining polish (optional, could be their own tickets):** no Chrome + Firefox matrix yet (single default-browser job — pairs with ECF-203); uploads raw Allure *results* rather than a rendered report; failure screenshots are captured inside allure-results (via the listener) but not surfaced as a standalone artifact.
 
 ### ECF-202 · Add RemoteWebDriver / Grid support — ⬜
 **Branch:** `feat/remote-driver`
@@ -147,6 +149,20 @@ Legend: ✅ done · 🔶 in progress · ⬜ not started
 **Branch:** `docs/flakiness-policy`
 **Scope:** Short doc capturing the ad-blocking approach, locator conventions, and the resilient-click contract.
 **Done when:** A `docs/` page describes the ad-blocking + click/wait strategy.
+
+### ECF-307 · HomePage slider intermittent load failure — ⬜
+**Branch:** `fix/homepage-slider-flake`
+**Problem:** `HomePage.assertOnHomePage()` waits on `homePageIdentifier` (`By.id("slider")`) and has intermittently failed to find it in headless CI — passed on commit, failed on merge, same code — i.e. a timing/transient failure, not a locator problem.
+**Important:** A previous `By.id("slider")` → `By.xpath("//section[@id='slider']")` swap was tried and reverted — it targets the same element, so it does **not** fix a timing flake. `main` currently has `By.id("slider")`.
+**Scope (if it recurs):** Fix the *wait/synchronization*, not the locator — e.g. handle the cookie-consent step before asserting the slider, or give the home signal a dedicated longer wait. Until it recurs, treat as a latent risk.
+**Done when:** HomePage load is stable across repeated headless CI runs without a locator hack.
+
+---
+
+## Conventions & carry-over notes
+
+- **Money comparisons use `BigDecimal.compareTo(...) == 0`, not `.equals()`** — `equals` is scale-sensitive (`400` ≠ `400.00`), so a numerically-correct price can fail on a scale mismatch. Use `compareTo` for any `BigDecimal` price/total assertion, with a failure message carrying both values.
+- **Cart-row lookup has two variants by intent** — `waitForCartRows()` (waits; for readers that expect rows) vs `getCurrentCartRows()` (`findElements`, instant snapshot; for `clearCart`/count checks). Don't point a "maybe empty" caller at the waiting one — it times out on zero.
 
 ---
 

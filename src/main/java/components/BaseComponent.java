@@ -53,11 +53,7 @@ public class BaseComponent {
 
     protected void enterText(By locator, String text) {
         WebElement element = waitForVisibleElement(locator);
-        element.sendKeys(text);
-    }
-
-    protected void enterTextNoClearing(By locator, String text) {
-        WebElement element = waitForVisibleElement(locator);
+        element.clear();
         element.sendKeys(text);
     }
 
