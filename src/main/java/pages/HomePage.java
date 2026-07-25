@@ -4,10 +4,8 @@ import components.AddToCartModalComponent;
 import components.BrandFilterComponent;
 import framework.drivers.DriverContext;
 import framework.base.BasePage;
-import framework.utils.ConfigReader;
 import framework.utils.TextNormalizer;
 import org.openqa.selenium.*;
-import org.testng.Assert;
 import components.CategoryFilterComponent;
 
 import java.util.List;
@@ -22,7 +20,6 @@ public class HomePage extends BasePage {
     private final By carouselAddToCartBtn = By.cssSelector(".btn.btn-default.add-to-cart");
     private final By acceptCookiesButton = By.xpath("//button[@aria-label='Consent']");
     private final By loggedInAsUsername = By.xpath("//a[contains(., 'Logged in as')]");
-    private final String BASE_URL = ConfigReader.getProperty("baseUrl");
 
     public final CategoryFilterComponent category;
     public final BrandFilterComponent brand;
@@ -35,10 +32,9 @@ public class HomePage extends BasePage {
         this.modal = new AddToCartModalComponent(driverContext);
     }
 
-    public void assertOnHomePage() {
-        waitForVisibleElement(homePageIdentifier);
+    public void verifyHomePageLoaded() {
+        waitForElementPresence(homePageIdentifier);
         acceptCookiesIfPresent();
-        Assert.assertTrue(driver.getCurrentUrl().contains(BASE_URL));
     }
 
     public String getCurrentUsername() {

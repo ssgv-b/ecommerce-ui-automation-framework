@@ -64,6 +64,6 @@ public class TestAssertions {
     public static void deleteAccountAndAssertHomePage(HomePage homePage) {
         AccountDeletedPage accountDeletedPage = homePage.getNavBar().navigateToDeleteAccount();
         HomePage returnedHomePage = accountDeletedPage.continueToHomePage();
-        returnedHomePage.assertOnHomePage();
+        returnedHomePage.verifyHomePageLoaded();
     }
 }
