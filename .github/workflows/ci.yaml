@@ -19,6 +19,12 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
+    - uses: browser-actions/setup-chrome@v1
+      id: setup-chrome
+      with:
+        chrome-version: '141'
+    - name: Verify Chrome version
+      run: ${{ steps.setup-chrome.outputs.chrome-path }} --version
     - name: Run CI
       run: mvn clean test -Pci
       
