@@ -160,12 +160,16 @@ Legend: ✅ done · 🔶 in progress · ⬜ not started
 **Scope:** Short doc capturing the ad-blocking approach, locator conventions, and the resilient-click contract.
 **Done when:** A `docs/` page describes the ad-blocking + click/wait strategy.
 
-### ECF-307 · HomePage slider intermittent load failure — ⬜
+### ECF-307 · HomePage slider intermittent load failure — ✅ DONE
 **Branch:** `fix/homepage-slider-flake`
-**Problem:** `HomePage.assertOnHomePage()` waits on `homePageIdentifier` (`By.id("slider")`) and has intermittently failed to find it in headless CI — passed on commit, failed on merge, same code — i.e. a timing/transient failure, not a locator problem.
-**Important:** A previous `By.id("slider")` → `By.xpath("//section[@id='slider']")` swap was tried and reverted — it targets the same element, so it does **not** fix a timing flake. `main` currently has `By.id("slider")`.
-**Scope (if it recurs):** Fix the *wait/synchronization*, not the locator — e.g. handle the cookie-consent step before asserting the slider, or give the home signal a dedicated longer wait. Until it recurs, treat as a latent risk.
-**Done when:** HomePage load is stable across repeated headless CI runs without a locator hack.
+**Problem:** `HomePage.assertOnHomePage()` waited on `homePageIdentifier` (`By.id("slider")`) via `waitForVisibleElement` and intermittently failed in headless CI — passed on commit, failed on merge, same code — a timing/transient failure, not a locator problem.
+**Root cause:** `visibilityOfElementLocated` requires `isDisplayed()` == true, i.e. **non-zero rendered size**. `#slider` is a carousel whose height depends on its slide images/CSS loading; in headless CI that rendering lags, so the element is present in the DOM but has zero effective size inside the wait window → visibility times out intermittently. (Confirms why the earlier locator swap didn't help — it never touched the wait condition.)
+**Delivered:**
+- Added `BaseComponent.waitForElementPresence` (`presenceOfElementLocated`) — DOM-existence, no rendering requirement.
+- `HomePage` load-guard now waits on **presence** of `#slider`, the correct semantic for "home DOM loaded" (presence is strictly more permissive than visibility, so low-risk). `#slider` is home-only, so presence alone is a sufficient signal.
+- Dropped the redundant `getCurrentUrl().contains(BASE_URL)` assertion — `baseUrl` is contained by *every* page URL on the site, so it validated nothing the slider signal didn't already cover more precisely. Removing it also cleaned up the dead `BASE_URL` field + `ConfigReader`/`org.testng.Assert` imports and the page-object-embedded TestNG assert.
+- Renamed `assertOnHomePage` → `verifyHomePageLoaded` (name states intent, not the wait mechanism); both callers (`TestFlows`, `TestAssertions`) updated.
+**Verification:** stable across repeated local headless (`-Pci`) runs. A flake can't be *proven* dead locally, so final confirmation is the GitHub Actions runner (where it originally surfaced) holding green across subsequent builds.
 
 ---
 

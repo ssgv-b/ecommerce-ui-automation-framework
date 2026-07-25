@@ -55,7 +55,7 @@ public class TestFlows {
 
     public HomePage openHomePage() {
         HomePage homePage = new HomePage(driverContext);
-        homePage.assertOnHomePage();
+        homePage.verifyHomePageLoaded();
         return homePage;
     }
 

@@ -72,6 +72,11 @@ public class BaseComponent {
         return wait.until(ExpectedConditions.invisibilityOfElementLocated(locator));
     }
 
+    protected void waitForElementPresence(By locator) {
+        log.debug("Waiting for element to be present: {}", locator);
+        wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+    }
+
     protected String getTextWhenVisible(By locator) {
         WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
         return element.getText();
