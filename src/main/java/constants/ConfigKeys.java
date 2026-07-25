@@ -8,4 +8,6 @@ public class ConfigKeys {
     public static final String DOWNLOAD_DIR = "downloadDir";
     public static final String WAIT_TIMEOUT = "waitTimeout";
     public static final String MAX_RETRY_COUNT = "maxRetryCount";
+    public static final String REMOTE_URL = "remoteUrl";
+    public static final String REMOTE = "remote";
 }

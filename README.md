@@ -116,11 +116,36 @@ Allure results directory:
 mvn clean test -Dbrowser=firefox -Dheadless=true
 ```
 
+## Remote Execution (Selenium Grid)
+
+The suite runs unchanged against a remote Selenium Grid — the switch is config-only. `remote` defaults to `false` (local), so nothing changes unless you opt in.
+
+| Key | Default | Purpose |
+| --- | --- | --- |
+| `remote` | `false` | `true` routes drivers through `RemoteWebDriver` instead of a local browser |
+| `remoteUrl` | `http://localhost:4444` | Grid hub endpoint |
+
+Start a local single-browser Grid with Docker, then point the suite at it:
+
+```bash
+docker run -d -p 4444:4444 -p 7900:7900 --shm-size=2g \
+  --name selenium-chrome selenium/standalone-chrome:4.41.0
+
+mvn clean test -Dremote=true -DremoteUrl=http://localhost:4444
+```
+
+Watch the browser live at `http://localhost:7900` (password `secret`). Tear down with `docker stop selenium-chrome && docker rm selenium-chrome`.
+
+**Apple Silicon (ARM64):** there is no `selenium/standalone-chrome` arm64 image — use `selenium/standalone-chromium` instead. No code change is needed.
+
+**Note:** file-download tests are not supported on the Grid — the browser downloads to the node's disk, not the runner's, so those cases will fail under `-Dremote=true`. Run download scenarios locally.
+
 ## Known Limitations
 
 - Tests depend on the live AutomationExercise environment and can fail on site-side instability or content changes.
 - Some tests rely on seeded credentials/test data being valid in the target environment.
 - Browser file-download behavior differs by OS/browser and may require local driver/browser tuning.
+- File downloads are not supported when running remotely against a Selenium Grid (see Remote Execution).
 - The suite currently focuses on UI flow validation; there is no API-level mocking layer.
 
 ## Notes
