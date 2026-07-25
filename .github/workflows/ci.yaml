@@ -20,7 +20,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Run CI
-      run: mvn clean test -Pci
+      run: mvn clean test -Pci -DchromeBinary=${{ steps.setup-chrome.outputs.chrome-path }}
       
     - name: Upload Allure results
       if: "!cancelled()"

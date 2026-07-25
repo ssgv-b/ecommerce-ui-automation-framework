@@ -97,6 +97,11 @@ public class DriverFactory {
         prefs.put("profile.password_manager_enabled", false);
         options.setExperimentalOption("prefs",prefs);
 
+        String binary = ConfigReader.getProperty(ConfigKeys.CHROME_BINARY, "");
+        if (!binary.isBlank()) {
+            options.setBinary(binary);
+        }
+
         return options;
     }
 

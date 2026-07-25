@@ -10,4 +10,5 @@ public class ConfigKeys {
     public static final String MAX_RETRY_COUNT = "maxRetryCount";
     public static final String REMOTE_URL = "remoteUrl";
     public static final String REMOTE = "remote";
+    public static final String CHROME_BINARY = "chromeBinary";
 }
