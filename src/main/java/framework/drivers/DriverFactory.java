@@ -2,16 +2,21 @@ package framework.drivers;
 
 import constants.ConfigKeys;
 import framework.utils.ConfigReader;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,7 +31,7 @@ public class DriverFactory {
     private static final Logger log = LoggerFactory.getLogger(DriverFactory.class);
 
     public static DriverContext initializeDriver() {
-        boolean headless = readBoolean(ConfigKeys.HEADLESS);
+        boolean headless = readBoolean(ConfigKeys.HEADLESS, false);
         String browserType = ConfigReader.getProperty(ConfigKeys.BROWSER);
 
         browserType = browserType.toLowerCase(Locale.ROOT).trim();
@@ -41,15 +46,29 @@ public class DriverFactory {
     }
 
     private static ChromeDriver createChromeDriver(boolean headless) {
-        Path downloadPath = resolveDownloadPath();
+        ChromeDriver driver;
+        ChromeOptions options = buildChromeOptions(headless);
+        try {
+            driver = new ChromeDriver(options);
+        }
+        catch (WebDriverException e) {
+            throw new RuntimeException("Failed to create ChromeDriver for: ", e);
+        }
+        if (!headless) {
+            driver.manage().window().maximize();
+        }
+        return driver;
 
+    }
+
+    private static ChromeOptions buildChromeOptions(boolean headless) {
+        Path downloadPath = resolveDownloadPath();
         ChromeOptions options = new ChromeOptions();
 
         if (headless) {
             options.addArguments("--headless=new");
             options.addArguments("--window-size=1920,1080");
         }
-
         // CI / Stability flags
         options.addArguments("--disable-save-password-bubble");
         options.addArguments("--no-sandbox");
@@ -62,6 +81,7 @@ public class DriverFactory {
                         "MAP *.googletagmanager.com ~NOTFOUND, " +
                         "MAP *.google-analytics.com ~NOTFOUND"
         );
+
         options.addArguments("--host-rules=MAP *.googlesyndication.com ~NOTFOUND");
 
         Map<String, Object> prefs = new HashMap<>();
@@ -77,23 +97,10 @@ public class DriverFactory {
         prefs.put("profile.password_manager_enabled", false);
         options.setExperimentalOption("prefs",prefs);
 
-        ChromeDriver driver;
-        try {
-            driver = new ChromeDriver(options);
-
-        }
-        catch (WebDriverException e) {
-            throw new RuntimeException("Failed to create ChromeDriver for: ", e);
-        }
-
-        if(!headless) {
-            driver.manage().window().maximize();
-        }
-        return driver;
-
+        return options;
     }
 
-    private static FirefoxDriver createFirefoxDriver(boolean headless) {
+    private static FirefoxOptions buildFirefoxOptions(boolean headless) {
         Path downloadPath = resolveDownloadPath();
 
         FirefoxOptions options = new FirefoxOptions();
@@ -112,19 +119,23 @@ public class DriverFactory {
         // disable password manager
         options.addPreference("signon.rememberSignons", false);
         options.addPreference("signon.autofillForms", false);
-        FirefoxDriver driver;
         if (headless) {
             options.addArguments("-headless");
             options.addArguments("--width=1920", "--height=1080");
         }
+        return options;
+    }
 
+
+    private static FirefoxDriver createFirefoxDriver(boolean headless) {
+        FirefoxDriver driver;
+        FirefoxOptions options = buildFirefoxOptions(headless);
         try {
             driver = new FirefoxDriver(options);
         }
         catch (WebDriverException e) {
             throw new RuntimeException("Failed to create FirefoxDriver for: ", e);
         }
-
         if (!headless) {
             driver.manage().window().maximize();
         }
@@ -132,11 +143,26 @@ public class DriverFactory {
     }
 
     private static WebDriver createDriver(String browserType, boolean headless) {
-        return switch (browserType) {
-            case "chrome" -> createChromeDriver(headless);
-            case "firefox" -> createFirefoxDriver(headless);
-            default -> throw new RuntimeException("Unsupported browser " + browserType);
-        };
+        String url = ConfigReader.getProperty(ConfigKeys.REMOTE_URL, "http://localhost:4444");
+        boolean isRemote = readBoolean(ConfigKeys.REMOTE, false);
+        if (isRemote) {
+            Capabilities options = switch (browserType) {
+                case "chrome" -> buildChromeOptions(headless);
+                case "firefox" -> buildFirefoxOptions(headless);
+                default -> throw new RuntimeException("Unsupported browser for remote " + browserType);
+            };
+            RemoteWebDriver remoteWebDriver = new RemoteWebDriver(toGridURL(url), options);
+            if (!headless) {
+                remoteWebDriver.manage().window().maximize();
+            }
+            return remoteWebDriver;
+        } else {
+            return switch (browserType) {
+                case "chrome" -> createChromeDriver(headless);
+                case "firefox" -> createFirefoxDriver(headless);
+                default -> throw new RuntimeException("Unsupported browser " + browserType);
+            };
+        }
     }
 
     public static void quitDriver() {
@@ -162,8 +188,8 @@ public class DriverFactory {
         }
     }
 
-    private static boolean readBoolean(String key) {
-        return Boolean.parseBoolean(ConfigReader.getProperty(key));
+    private static boolean readBoolean(String key, boolean defaultValue) {
+        return Boolean.parseBoolean(ConfigReader.getProperty(key, String.valueOf(defaultValue)));
     }
 
     private static Path resolveDownloadPath() {
@@ -174,5 +200,13 @@ public class DriverFactory {
             throw new RuntimeException("Failed to create download directory: " + path, e);
         }
         return path;
+    }
+
+    private static URL toGridURL(String url) {
+        try {
+            return URI.create(url).toURL();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Invalid remote grid URL: " + url, e);
+        }
     }
 }
