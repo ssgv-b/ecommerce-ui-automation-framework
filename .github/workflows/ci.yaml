@@ -23,10 +23,14 @@ jobs:
       id: setup-chrome
       with:
         chrome-version: '141'
+        install-chromedriver: true
     - name: Verify Chrome version
       run: ${{ steps.setup-chrome.outputs.chrome-path }} --version
     - name: Run CI
-      run: mvn clean test -Pci -DchromeBinary=${{ steps.setup-chrome.outputs.chrome-path }}
+      run: >
+        mvn clean test -Pci
+        -DchromeBinary=${{ steps.setup-chrome.outputs.chrome-path }}
+        -Dwebdriver.chrome.driver=${{ steps.setup-chrome.outputs.chromedriver-path }}
       
     - name: Upload Allure results
       if: "!cancelled()"
