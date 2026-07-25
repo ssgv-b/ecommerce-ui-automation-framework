@@ -48,11 +48,13 @@ public class DriverFactory {
     private static ChromeDriver createChromeDriver(boolean headless) {
         ChromeDriver driver;
         ChromeOptions options = buildChromeOptions(headless);
+        String binary = ConfigReader.getProperty(ConfigKeys.CHROME_BINARY, "");
         try {
             driver = new ChromeDriver(options);
         }
         catch (WebDriverException e) {
-            throw new RuntimeException("Failed to create ChromeDriver for: ", e);
+            throw new RuntimeException(
+                    "Failed to create ChromeDriver (headless=" + headless + ", binary=" + binary + ")", e);
         }
         if (!headless) {
             driver.manage().window().maximize();
