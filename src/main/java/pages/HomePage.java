@@ -61,11 +61,6 @@ public class HomePage extends BasePage {
     }
 
     private void acceptCookiesIfPresent() {
-        try {
-            waitForVisibleElement(acceptCookiesButton);
-            click(acceptCookiesButton);
-        } catch (NoSuchElementException | TimeoutException ignored) {
-            // If the cookie consent button is not found, do nothing
-        }
+        waitForOptionalElement(acceptCookiesButton).ifPresent(this::click);
     }
 }
