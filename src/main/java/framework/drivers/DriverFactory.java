@@ -37,12 +37,13 @@ public class DriverFactory {
         browserType = browserType.toLowerCase(Locale.ROOT).trim();
         long pageTimeout = readLong(ConfigKeys.PAGE_LOAD_TIMEOUT);
         Duration waitDuration = Duration.ofSeconds(readLong(ConfigKeys.WAIT_TIMEOUT));
+        Duration optionalWaitDuration = Duration.ofSeconds(readLong(ConfigKeys.OPTIONAL_WAIT_TIMEOUT));
 
         WebDriver driver = createDriver(browserType, headless);
         driverRegistry.set(driver);
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(pageTimeout));
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(0));
-        return new DriverContext(driver, waitDuration);
+        return new DriverContext(driver, waitDuration, optionalWaitDuration);
     }
 
     private static ChromeDriver createChromeDriver(boolean headless) {
