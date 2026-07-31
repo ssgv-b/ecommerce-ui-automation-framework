@@ -117,11 +117,16 @@ Legend: ✅ done · 🔶 in progress · ⬜ not started
 - Bumped global `waitTimeout` 8→10 in CI as cheap flake insurance (early-return makes a higher cap free on passing tests); local stays 5.
 **Verification:** ran the full suite headless **3× back-to-back locally**. Each run had one failure, but all three were *different* tests and all pre-existing live-site flakes (network `ERR_INTERNET_DISCONNECTED`, `StaleElementReferenceException`, CDP `Node ... does not belong to the document`) — **zero `TimeoutException` across all three runs**, confirming the tighter optional-wait and new timeouts introduce no timeout regressions. Cookie optional-wait fired 30–33×/run with no failures.
 
-### ECF-308 · Suite flakiness on live-site interactions — ⬜
+### ECF-308 · Suite flakiness on live-site interactions — ✅ DONE (partial, evidence-scoped)
 **Branch:** `test/interaction-flakiness-hardening`
-**Problem:** Surfaced by the ECF-204 3× run — one flake per run, all different tests, none timeout-related: `StaleElementReferenceException`, CDP `Node with given id does not belong to the document`, and a transient network drop. Retries (`maxRetryCount`) don't fully absorb them. These are DOM-race / environment issues independent of wait tuning.
-**Scope:** Harden interaction paths against stale-element/DOM-mutation races (re-locate-on-stale in the safe wrappers, as done for `click(By)`'s `ElementClickInterceptedException`); consider widening retry to cover these exception classes. Network blips are environmental — out of scope beyond retry.
-**Done when:** A 3× back-to-back suite run is green with no interaction-flake failures.
+**Problem:** Surfaced by the ECF-204 3× run — one flake per run, all different tests, none timeout-related: `StaleElementReferenceException` (at `click`, via `NavBar.navigateToCart`), CDP `Node with given id does not belong to the document` (inside a visibility wait in `CreateAccountPage`'s constructor), and a transient network drop.
+**Delivered (scoped to the *observed* failures, not blanket):**
+- `click(By)` — widened the existing catch to also cover `StaleElementReferenceException` (same remedy as the interception path: re-locate via `waitAndScrollToElement`, retry). This was the actual `click` failure.
+- `enterText` — routed through a new `retryOnStale(By, Consumer<WebElement>)` helper that re-locates and retries **once** on staleness, logging the retry (`log.warn`) so future CI runs surface how often it fires instead of silently self-healing.
+- Deliberately **not** hardened: `selectByVisibleText`/`selectByValue` (left on their original `waitForClickable`) and `getTextWhenVisible` — neither was an observed failure, and a generic wrapper would have downgraded selects' `enabled` wait to visible-only. Evidence-scoped over speculative.
+- Rode-along config fix: trimmed surefire `<systemPropertyVariables>` to just `test.env`, so `config.properties`/`config-*.properties` are the single source of truth. This is what finally makes **ECF-204's `waitTimeout=10` actually take effect in CI** — the pom's profile value was silently overriding the file via system property. (Local `-D` overrides still work.)
+**Verification:** compiles; interaction hardening is sound by construction (re-locate + retry). The earlier 3× `-Pci` green run *predates* the stale-retry code, so it validates the config fix + no-regression, not the retry itself — staleness is intermittent and can't be deterministically reproduced. The added retry logging is the ongoing signal.
+**Still open (deferred, own follow-up if it recurs):** the CDP `Node...` failure inside `CreateAccountPage`'s constructor wait is a *different* shape (detach during the `ExpectedConditions` poll, which doesn't ignore `WebDriverException`), not a located-then-stale race — a re-locate-after-return retry wouldn't catch it. Leave it to `maxRetryCount`; add a targeted `.ignoring(...)` on the page-signal wait only if it recurs.
 
 ### ECF-205 · Repo hygiene cleanup — ⬜
 **Branch:** `chore/repo-hygiene`
