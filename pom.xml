@@ -38,12 +38,6 @@
                     </properties>
                     <systemPropertyVariables>
                         <test.env>${test.env}</test.env>
-                        <browser>${browser}</browser>
-                        <headless>${headless}</headless>
-                        <baseUrl>${baseUrl}</baseUrl>
-                        <downloadDir>${downloadDir}</downloadDir>
-                        <pageLoadTimeout>${pageLoadTimeout}</pageLoadTimeout>
-                        <waitTimeout>${waitTimeout}</waitTimeout>
                     </systemPropertyVariables>
                 </configuration>
                 <dependencies>

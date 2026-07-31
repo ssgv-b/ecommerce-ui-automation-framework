@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 
 public class BaseComponent {
@@ -31,10 +32,10 @@ public class BaseComponent {
         WebElement element = waitForClickable(locator);
         try {
             element.click();
-        } catch (ElementClickInterceptedException e) {
+        } catch (ElementClickInterceptedException | StaleElementReferenceException e) {
             log.warn("Unable to click on element, retrying.");
-            WebElement updatedElement = waitAndScrollToElement(locator);
-            updatedElement.click();
+            WebElement updated = waitAndScrollToElement(locator);
+            updated.click();
         }
 
     }
@@ -56,9 +57,10 @@ public class BaseComponent {
     }
 
     protected void enterText(By locator, String text) {
-        WebElement element = waitForVisibleElement(locator);
-        element.clear();
-        element.sendKeys(text);
+        retryOnStale(locator, element -> {
+            element.clear();
+            element.sendKeys(text);
+        });
     }
 
     protected WebElement waitForVisibleElement(By locator) {
@@ -110,5 +112,14 @@ public class BaseComponent {
 
     protected List<WebElement> findElements(By locator) {
         return driver.findElements(locator);
+    }
+
+    private void retryOnStale(By locator, Consumer<WebElement> action) {
+        try {
+            action.accept(waitForVisibleElement(locator));
+        } catch (StaleElementReferenceException e) {
+            log.warn("Retrying stale element: {}", locator);
+            action.accept(waitForVisibleElement(locator));
+        }
     }
 }
