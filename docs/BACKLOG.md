@@ -102,11 +102,14 @@ Legend: ✅ done · 🔶 in progress · ⬜ not started
 
 **Follow-ups (own tickets):** Chrome + Firefox matrix via hub + node (docker-compose) pairs with ECF-201/203; CI doesn't provision a Grid yet (`config-ci.properties` stays local).
 
-### ECF-203 · Pin browser versions in CI — ⬜
-**Branch:** `ci/pin-browser-versions`
+### ECF-203 · Pin browser versions in CI — ✅ DONE
+**Branch:** `ci/pin-browser-versions` (+ follow-ups `ci/Pin-Chrome-Version`, `test/interaction-flakiness-hardening`)
 **Problem:** Selenium Manager auto-resolution causes version drift in CI.
-**Scope:** Pin Chrome/Firefox (and driver) versions in the CI environment. (Depends on ECF-201.)
-**Done when:** CI logs show a fixed, intentional browser version.
+**Delivered:**
+- `setup-chrome@v1` pins Chrome **141** (Chrome-for-Testing) + `install-chromedriver` pins the matching driver; workflow verifies the installed version.
+- Pinning the browser alone wasn't enough — Selenium Manager still auto-resolved a mismatched driver against the runner's default Chrome (150). Fixed by feeding Selenium the pinned binary (`chromeBinary` → `ChromeOptions.setBinary`) and the pinned driver (`-Dwebdriver.chrome.driver`), so it launches 141/141.
+- Config single-source fix (see ECF-308) removed a pom override that was silently forcing the old value, so `config-ci` actually takes effect.
+**Done when:** ✅ CI logs launch a fixed, intentional Chrome 141 with a matching 141 driver; no `session not created` mismatch, no CDP-version warning.
 
 ### ECF-204 · Revisit wait timeouts — ✅ DONE
 **Branch:** `tune/wait-timeouts`
@@ -134,11 +137,16 @@ Legend: ✅ done · 🔶 in progress · ⬜ not started
 **Scope:** `git rm --cached` the tracked output/artifacts; verify `.gitignore` covers all of them.
 **Done when:** `git status` is clean after a full test+report run; no generated artifacts tracked.
 
-### ECF-206 · Introduce custom exception hierarchy — ⬜
+### ECF-206 · Introduce custom exception hierarchy — ✅ DONE (bucket 1)
 **Branch:** `refactor/custom-exceptions`
 **Problem:** Bare `RuntimeException` everywhere ("Product not found", "Brand not found") — vague in reports, not selectively catchable.
-**Scope:** Small hierarchy (e.g. `ElementNotFoundException`, `TestDataException`); replace generic throws in pages/components/factories.
-**Done when:** Lookup failures throw a descriptive typed exception that reads cleanly in Allure.
+**Delivered (scoped to UI lookup/state failures — "bucket 1"):**
+- `framework/exceptions/`: abstract `FrameworkException extends RuntimeException` (two forwarding constructors — `(message)` and `(message, cause)`, no fields) + `ElementNotFoundException` + `PageStateException`. Unchecked throughout, so no signature churn.
+- **`ElementNotFoundException`** — every "expected element/collection absent": product/search/carousel/cart/checkout-row lookups **and the brand/category/subcategory filter lookups** (the "Brand not found" the ticket named).
+- **`PageStateException`** — postcondition/resolution failures (cart count didn't decrease [cause preserved], couldn't resolve street).
+- Type carries the category; the throw site supplies the descriptive message. Value is readability + report grouping now, selective catchability latent (nothing catches them yet).
+**Deliberately out of scope:** framework/config/driver setup errors (bucket 2 — readability-only, never selectively caught; existing logging suffices) and model field-validations (bucket 3 — left as idiomatic `IllegalArgumentException`/`IllegalStateException`; the title/DOB checks in `CreateAccountPage` were reclassified *off* the UI types to `IllegalArgumentException`, since they validate test data, not page state).
+**Done when:** ✅ Lookup failures throw a descriptive typed exception; no bare `RuntimeException` left in pages/components.
 
 ---
 

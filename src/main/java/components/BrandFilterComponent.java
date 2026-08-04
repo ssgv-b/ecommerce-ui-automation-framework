@@ -1,6 +1,7 @@
 package components;
 
 import framework.drivers.DriverContext;
+import framework.exceptions.ElementNotFoundException;
 import framework.utils.TextNormalizer;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -20,7 +21,7 @@ public class BrandFilterComponent extends BaseComponent{
         List<WebElement> brands = driver.findElements(brandsList);
         String normalizedTarget = TextNormalizer.normalizeText(brandName);
         WebElement selectedBrand = brands.stream().filter(b-> TextNormalizer.normalizeText(b.getText())
-                .equals(normalizedTarget)).findFirst().orElseThrow(()->new RuntimeException("Brand "+normalizedTarget+" not found."));
+                .equals(normalizedTarget)).findFirst().orElseThrow(()->new ElementNotFoundException("Brand "+normalizedTarget+" not found."));
         waitAndScrollToElement(brandsFilter);
         click(selectedBrand);
         return new ProductsPage(driverContext);

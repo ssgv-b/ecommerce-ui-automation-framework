@@ -2,6 +2,8 @@ package pages;
 
 import framework.base.BasePage;
 import framework.drivers.DriverContext;
+import framework.exceptions.ElementNotFoundException;
+import framework.exceptions.PageStateException;
 import framework.utils.ProductTextParser;
 import framework.utils.TextNormalizer;
 import models.CartItem;
@@ -39,7 +41,7 @@ public class CartPage extends BasePage {
                 wait.until(driver -> getCurrentCartRows().size() < previousCount);
             }
             catch (TimeoutException e) {
-                throw new RuntimeException("Cart row count did not decrease after remove click", e);
+                throw new PageStateException("Cart row count did not decrease after remove click", e);
             }
         }
     }
@@ -77,7 +79,7 @@ public class CartPage extends BasePage {
                 .map(e-> TextNormalizer.normalizeText(e.findElement(cartProductName)
                         .getText()))
                 .findFirst()
-                .orElseThrow(()->new RuntimeException("No products found in cart!"));
+                .orElseThrow(()->new ElementNotFoundException("No products found in cart!"));
         }
 
     public CheckoutPage goToCheckoutLoggedIn() {
