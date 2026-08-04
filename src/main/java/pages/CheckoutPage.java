@@ -2,6 +2,8 @@ package pages;
 
 import framework.base.BasePage;
 import framework.drivers.DriverContext;
+import framework.exceptions.ElementNotFoundException;
+import framework.exceptions.PageStateException;
 import models.Address;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -55,7 +57,7 @@ public class CheckoutPage extends BasePage {
     private String getNormalizedStreetAddress(WebElement address) {
         List<WebElement> addressValues = address.findElements(addressStreet);
         if (addressValues.isEmpty()) {
-            throw new IllegalStateException("Expected address rows but received none.");
+            throw new ElementNotFoundException("Expected address rows but received none.");
         }
 
         // Prefer stable index mapping when company row is present (0: company, 1: address1, 2: address2).
@@ -69,7 +71,7 @@ public class CheckoutPage extends BasePage {
         }
 
         if (address1 == null) {
-            throw new IllegalStateException("Could not resolve primary street address from checkout page.");
+            throw new PageStateException("Could not resolve primary street address from checkout page.");
         }
         if (address2 == null || address2.isBlank()) {
             return address1;

@@ -4,6 +4,7 @@ import components.BrandFilterComponent;
 import components.CategoryFilterComponent;
 import framework.base.BasePage;
 import framework.drivers.DriverContext;
+import framework.exceptions.ElementNotFoundException;
 import framework.utils.TextNormalizer;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -40,7 +41,7 @@ public class ProductsPage extends BasePage {
         String normalizedTarget = TextNormalizer.normalizeText(productName);
         return products.stream().filter(p ->
                 TextNormalizer.normalizeText(p.findElement(productNameLocator).getText()).equals(normalizedTarget))
-                .findFirst().orElseThrow(() -> new RuntimeException("Product name " + productName + " not found!"));
+                .findFirst().orElseThrow(() -> new ElementNotFoundException("Product name " + productName + " not found!"));
     }
 
     public void searchProduct(String productName) {
@@ -55,7 +56,7 @@ public class ProductsPage extends BasePage {
             return;
         }
         if (products.isEmpty()) {
-            throw new RuntimeException("No search results found!");
+            throw new ElementNotFoundException("No search results found!");
         }
         int actualCount = Math.min(count, products.size());
         for (int i=0; i < actualCount; i++) {
@@ -113,6 +114,6 @@ public class ProductsPage extends BasePage {
         return results.stream()
                 .map(e -> e.findElement(productNameLocator).getText())
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("No search result found!"));
+                .orElseThrow(() -> new ElementNotFoundException("No search result found!"));
     }
 }

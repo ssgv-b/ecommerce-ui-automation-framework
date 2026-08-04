@@ -4,6 +4,7 @@ import components.AddToCartModalComponent;
 import components.BrandFilterComponent;
 import framework.drivers.DriverContext;
 import framework.base.BasePage;
+import framework.exceptions.ElementNotFoundException;
 import framework.utils.TextNormalizer;
 import org.openqa.selenium.*;
 import components.CategoryFilterComponent;
@@ -52,7 +53,7 @@ public class HomePage extends BasePage {
         String normalizedTarget = TextNormalizer.normalizeText(productName);
          return carouselItems.stream().filter(c->TextNormalizer.normalizeText(c.findElement(carouselProductName)
                 .getText()).equals(normalizedTarget)).findFirst()
-                .orElseThrow(()-> new RuntimeException("Carousel with name " + productName + " not found!"));
+                .orElseThrow(()-> new ElementNotFoundException("Carousel with name " + productName + " not found!"));
     }
     public void addRecommendedProductToCart(String productName) {
         goToCarouselSection();

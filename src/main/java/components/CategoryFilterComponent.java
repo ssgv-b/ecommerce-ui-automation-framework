@@ -1,6 +1,7 @@
 package components;
 
 import framework.drivers.DriverContext;
+import framework.exceptions.ElementNotFoundException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import pages.ProductsPage;
@@ -36,13 +37,13 @@ public class CategoryFilterComponent extends BaseComponent {
         List<WebElement> categoryElements = driver.findElements(categoryList);
         return categoryElements.stream().filter(category ->
                         category.getText().equalsIgnoreCase(mainCategory)).findFirst()
-                .orElseThrow(() -> new RuntimeException("Category " + mainCategory + " not found."));
+                .orElseThrow(() -> new ElementNotFoundException("Category " + mainCategory + " not found."));
     }
 
     private void selectSubCategory(WebElement selectedCategory, String subCategory) {
         List<WebElement> subCategoryElements = selectedCategory.findElements(subCategoryList);
         WebElement selectedSubCategory = subCategoryElements.stream().filter(category ->
-                category.getText().trim().equalsIgnoreCase(subCategory)).findFirst().orElseThrow(() -> new RuntimeException("Subcategory " + subCategory + " not found."));
+                category.getText().trim().equalsIgnoreCase(subCategory)).findFirst().orElseThrow(() -> new ElementNotFoundException("Subcategory " + subCategory + " not found."));
         click(selectedSubCategory);
     }
 

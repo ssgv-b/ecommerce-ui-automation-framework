@@ -96,7 +96,7 @@ public class CreateAccountPage extends BasePage {
             return;
         }
         if (day.isBlank() || month.isBlank() || year.isBlank()) {
-            throw new RuntimeException("Date of birth must be fully provided or fully omitted");
+            throw new IllegalArgumentException("Date of birth must be fully provided or fully omitted");
         }
         selectDateOfBirth(day, month, year);
     }
@@ -122,7 +122,7 @@ public class CreateAccountPage extends BasePage {
             case "mr", "mrs" -> {
                 return title;
             }
-            default -> throw new RuntimeException(
+            default -> throw new IllegalArgumentException(
                     "Unsupported title for registration. Allowed values are Mr/Mrs."
             );
         }
