@@ -14,13 +14,20 @@ public class CartItem {
         this.quantity = quantity;
         this.totalPrice = totalPrice;
     }
+
     public String getProductName() {
         return productName;
     }
+
     public BigDecimal getPrice() {
         return price;
     }
-    public Integer getQuantity() {return quantity;}
-    public BigDecimal getTotalPrice() {return totalPrice;}
-}
 
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+}

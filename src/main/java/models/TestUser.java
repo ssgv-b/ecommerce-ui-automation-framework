@@ -4,8 +4,7 @@ public class TestUser {
     private final AccountRegistrationData profile;
     private final UserIdentityData identity;
 
-    public TestUser(AccountRegistrationData profile,
-                    UserIdentityData identity) {
+    public TestUser(AccountRegistrationData profile, UserIdentityData identity) {
         this.profile = profile;
         this.identity = identity;
     }

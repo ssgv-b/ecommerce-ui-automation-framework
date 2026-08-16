@@ -3,11 +3,10 @@ package pages;
 import framework.base.BasePage;
 import framework.drivers.DriverContext;
 import framework.utils.ProductTextParser;
+import java.math.BigDecimal;
 import models.ProductDetails;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
-import java.math.BigDecimal;
 
 public class ProductDetailsPage extends BasePage {
     public ProductDetailsPage(DriverContext driverContext) {
@@ -15,6 +14,7 @@ public class ProductDetailsPage extends BasePage {
         By productDetailsPageSignal = By.className("product-details");
         waitForVisibleElement(productDetailsPageSignal);
     }
+
     private final By productName = By.xpath("//div[@class='product-information']/h2");
     private final By productCategory = By.xpath("//p[contains(.,'Category')]");
     private final By productPrice = By.xpath("//div[@class='product-information']/span/span");
@@ -29,7 +29,6 @@ public class ProductDetailsPage extends BasePage {
     private final By reviewTextInput = By.id("review");
     private final By submitReviewButton = By.id("button-review");
     private final By reviewConfirmationText = By.xpath("//div[@class='alert-success alert']/span");
-
 
     public ProductDetails getProductDetails() {
         String name = getTextWhenVisible(productName);
@@ -64,5 +63,4 @@ public class ProductDetailsPage extends BasePage {
     public String getReviewSubmissionConfirmation() {
         return getTextWhenVisible(reviewConfirmationText);
     }
-
 }

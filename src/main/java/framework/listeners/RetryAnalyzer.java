@@ -9,9 +9,10 @@ public class RetryAnalyzer implements IRetryAnalyzer {
 
     private int retryCount = 0;
     private static final int maxRetryCount = Integer.parseInt(ConfigReader.getProperty(ConfigKeys.MAX_RETRY_COUNT));
+
     @Override
     public boolean retry(ITestResult iTestResult) {
-        if (retryCount<maxRetryCount) {
+        if (retryCount < maxRetryCount) {
             retryCount++;
             return true;
         }

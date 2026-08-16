@@ -1,0 +1,6 @@
+<FindBugsFilter>
+<Match>
+    <Class name="framework.base.BaseTest" />
+    <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD" />
+</Match>
+</FindBugsFilter>

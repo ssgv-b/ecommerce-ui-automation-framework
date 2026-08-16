@@ -4,11 +4,10 @@ import components.BaseComponent;
 import components.Footer;
 import components.NavBar;
 import framework.drivers.DriverContext;
+import java.time.Duration;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.time.Duration;
 
 public class BasePage extends BaseComponent {
 
@@ -33,12 +32,15 @@ public class BasePage extends BaseComponent {
     }
 
     public void scrollToTopArrow() {
-       WebElement scrollElement =  waitForClickable(scrollTopArrow);
-       scrollElement.click();
+        WebElement scrollElement = waitForClickable(scrollTopArrow);
+        scrollElement.click();
     }
 
     public NavBar getNavBar() {
         return navBar;
     }
-    public Footer getFooter() {return footer; }
+
+    public Footer getFooter() {
+        return footer;
+    }
 }

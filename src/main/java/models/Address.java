@@ -44,11 +44,11 @@ public class Address {
 
         Address address = (Address) o;
 
-        return Objects.equals(name, address.name) &&
-                Objects.equals(street, address.street) &&
-                Objects.equals(cityStateZip, address.cityStateZip) &&
-                Objects.equals(country, address.country) &&
-                Objects.equals(phoneNumber, address.phoneNumber);
+        return Objects.equals(name, address.name)
+                && Objects.equals(street, address.street)
+                && Objects.equals(cityStateZip, address.cityStateZip)
+                && Objects.equals(country, address.country)
+                && Objects.equals(phoneNumber, address.phoneNumber);
     }
 
     @Override
@@ -58,12 +58,11 @@ public class Address {
 
     @Override
     public String toString() {
-        return "Address{" +
-                "name='" + name + '\'' +
-                ", street='" + street + '\'' +
-                ", cityStateZip='" + cityStateZip + '\'' +
-                ", country='" + country + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                '}';
+        return "Address{" + "name='"
+                + name + '\'' + ", street='"
+                + street + '\'' + ", cityStateZip='"
+                + cityStateZip + '\'' + ", country='"
+                + country + '\'' + ", phoneNumber='"
+                + phoneNumber + '\'' + '}';
     }
 }

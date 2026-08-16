@@ -5,7 +5,7 @@ import framework.drivers.DriverContext;
 import org.openqa.selenium.By;
 
 public class AccountCreatedPage extends BasePage {
-    public AccountCreatedPage (DriverContext driverContext) {
+    public AccountCreatedPage(DriverContext driverContext) {
         super(driverContext);
         By accountCreatedPageSignal = By.xpath("//h2[@data-qa='account-created']/b");
         waitForVisibleElement(accountCreatedPageSignal);
@@ -17,5 +17,4 @@ public class AccountCreatedPage extends BasePage {
         click(continueButton);
         return new HomePage(driverContext);
     }
-
 }

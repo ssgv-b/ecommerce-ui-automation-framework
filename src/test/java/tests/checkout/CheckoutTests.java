@@ -1,10 +1,11 @@
 package tests.checkout;
 
+import static framework.utils.TestAssertions.assertRegistrationAndCheckoutAddressesMatch;
+
 import framework.base.BaseTest;
 import framework.utils.TestAssertions;
 import org.testng.annotations.Test;
 import pages.*;
-import static framework.utils.TestAssertions.assertRegistrationAndCheckoutAddressesMatch;
 
 public class CheckoutTests extends BaseTest {
 
@@ -23,6 +24,5 @@ public class CheckoutTests extends BaseTest {
         assertRegistrationAndCheckoutAddressesMatch(checkoutPage, testUser.getProfile());
         AccountDeletedPage accountDeletedPage = checkoutPage.getNavBar().navigateToDeleteAccount();
         accountDeletedPage.continueToHomePage();
-
     }
 }

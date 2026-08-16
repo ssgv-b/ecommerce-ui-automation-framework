@@ -4,9 +4,9 @@ import framework.drivers.DriverContext;
 import org.openqa.selenium.By;
 import pages.*;
 
-public class NavBar extends BaseComponent{
+public class NavBar extends BaseComponent {
 
-    public NavBar(DriverContext driverContext){
+    public NavBar(DriverContext driverContext) {
         super(driverContext);
     }
 

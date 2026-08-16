@@ -73,10 +73,11 @@ public class CreditCardDetailsData {
             this.expiryYear = parseExpiryYear(expiryYear);
             return this;
         }
+
         private int parseCvc(int cvc) {
             int min = 100;
             int max = 999;
-            if(cvc >=min && cvc <=max) {
+            if (cvc >= min && cvc <= max) {
                 return cvc;
             }
             throw new IllegalArgumentException("Invalid CVC code, must be a 3 digit number.");
@@ -85,7 +86,7 @@ public class CreditCardDetailsData {
         private int parseExpiryMonth(int expiryMonth) {
             int min = 1;
             int max = 12;
-            if (expiryMonth >=min && expiryMonth <=max) {
+            if (expiryMonth >= min && expiryMonth <= max) {
                 return expiryMonth;
             }
             throw new IllegalArgumentException("Invalid expiry month - value must be between 1 and 12.");
@@ -94,23 +95,20 @@ public class CreditCardDetailsData {
         private int parseExpiryYear(int expiryYear) {
             int min = Year.now().getValue();
             int max = Year.now().plusYears(15).getValue();
-            if (expiryYear >=min && expiryYear <=max) {
+            if (expiryYear >= min && expiryYear <= max) {
                 return expiryYear;
             }
             throw new IllegalArgumentException("Invalid expiry year");
         }
 
         public CreditCardDetailsData build() {
-            if (cardName==null || cardName.isBlank()) {
+            if (cardName == null || cardName.isBlank()) {
                 throw new IllegalStateException("Card name is required.");
             }
-            if (cardNumber==null || cardNumber.isBlank()) {
+            if (cardNumber == null || cardNumber.isBlank()) {
                 throw new IllegalStateException("Card number is required.");
             }
             return new CreditCardDetailsData(this);
         }
-
     }
-
 }
-

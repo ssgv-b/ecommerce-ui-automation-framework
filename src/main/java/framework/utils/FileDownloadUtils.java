@@ -1,28 +1,19 @@
 package framework.utils;
 
-
-import org.testng.Assert;
 import java.io.File;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
+import org.testng.Assert;
 
 public class FileDownloadUtils {
 
-    public static File waitForDownloadedFile(
-            Path downloadDir,
-            String expectedNamePart,
-            Duration timeout
-    ) {
+    public static File waitForDownloadedFile(Path downloadDir, String expectedNamePart, Duration timeout) {
         return waitForDownloadedFile(downloadDir, expectedNamePart, timeout, null);
     }
 
     public static File waitForDownloadedFile(
-            Path downloadDir,
-            String expectedNamePart,
-            Duration timeout,
-            Instant notBefore
-    ) {
+            Path downloadDir, String expectedNamePart, Duration timeout, Instant notBefore) {
         Instant end = Instant.now().plus(timeout);
         long notBeforeEpoch = notBefore == null ? Long.MIN_VALUE : notBefore.toEpochMilli();
 
@@ -50,21 +41,14 @@ public class FileDownloadUtils {
         }
 
         throw new RuntimeException(
-                "Timed out waiting for file containing '" + expectedNamePart +
-                        "' in directory: " + downloadDir
-        );
-    }
-        public static void assertValidDownloadedFile(File file, String expectedNamePart) {
-            Assert.assertNotNull(file, "Downloaded file is null");
-            Assert.assertTrue(
-                    file.getName().contains(expectedNamePart),
-                    "Expected file name to contain '" + expectedNamePart +
-                            "' but was '" + file.getName() + "'"
-            );
-            Assert.assertTrue(
-                    file.length() > 0,
-                    "Downloaded file is empty: " + file.getName()
-            );
-        }
+                "Timed out waiting for file containing '" + expectedNamePart + "' in directory: " + downloadDir);
     }
 
+    public static void assertValidDownloadedFile(File file, String expectedNamePart) {
+        Assert.assertNotNull(file, "Downloaded file is null");
+        Assert.assertTrue(
+                file.getName().contains(expectedNamePart),
+                "Expected file name to contain '" + expectedNamePart + "' but was '" + file.getName() + "'");
+        Assert.assertTrue(file.length() > 0, "Downloaded file is empty: " + file.getName());
+    }
+}

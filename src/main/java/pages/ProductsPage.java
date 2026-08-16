@@ -6,13 +6,12 @@ import framework.base.BasePage;
 import framework.drivers.DriverContext;
 import framework.exceptions.ElementNotFoundException;
 import framework.utils.TextNormalizer;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 public class ProductsPage extends BasePage {
     public ProductsPage(DriverContext driverContext) {
@@ -37,11 +36,14 @@ public class ProductsPage extends BasePage {
 
     private WebElement findProductCardByName(String productName) {
         waitForVisibleElement(productNameLocator);
-        List <WebElement> products = findElements(productCards);
+        List<WebElement> products = findElements(productCards);
         String normalizedTarget = TextNormalizer.normalizeText(productName);
-        return products.stream().filter(p ->
-                TextNormalizer.normalizeText(p.findElement(productNameLocator).getText()).equals(normalizedTarget))
-                .findFirst().orElseThrow(() -> new ElementNotFoundException("Product name " + productName + " not found!"));
+        return products.stream()
+                .filter(p -> TextNormalizer.normalizeText(
+                                p.findElement(productNameLocator).getText())
+                        .equals(normalizedTarget))
+                .findFirst()
+                .orElseThrow(() -> new ElementNotFoundException("Product name " + productName + " not found!"));
     }
 
     public void searchProduct(String productName) {
@@ -59,14 +61,13 @@ public class ProductsPage extends BasePage {
             throw new ElementNotFoundException("No search results found!");
         }
         int actualCount = Math.min(count, products.size());
-        for (int i=0; i < actualCount; i++) {
+        for (int i = 0; i < actualCount; i++) {
             WebElement product = products.get(i);
             WebElement button = product.findElement(addToCartButton);
             click(button);
             waitForVisibleElement(continueShoppingButton);
             click(continueShoppingButton);
         }
-
     }
 
     public void addAllProductsToCart() {
@@ -100,13 +101,16 @@ public class ProductsPage extends BasePage {
             return lowerCaseTitle.toUpperCase(Locale.ROOT);
         }
         String remainder = lowerCaseTitle.substring(1);
-        String capitalLetter = lowerCaseTitle.substring(0,1).toUpperCase(Locale.ROOT);
-        return  capitalLetter+remainder;
+        String capitalLetter = lowerCaseTitle.substring(0, 1).toUpperCase(Locale.ROOT);
+        return capitalLetter + remainder;
     }
 
     public Set<String> getAllSearchProductNames() {
-       List <WebElement> results =  findElements(productNameLocator);
-       return results.stream().map(WebElement::getText).map(TextNormalizer::normalizeText).collect(Collectors.toSet());
+        List<WebElement> results = findElements(productNameLocator);
+        return results.stream()
+                .map(WebElement::getText)
+                .map(TextNormalizer::normalizeText)
+                .collect(Collectors.toSet());
     }
 
     public String getFirstSearchProductName() {

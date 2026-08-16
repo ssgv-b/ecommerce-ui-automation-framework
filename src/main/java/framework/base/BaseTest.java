@@ -20,7 +20,7 @@ public class BaseTest {
     protected TestUser testUser;
 
     @BeforeMethod(alwaysRun = true)
-    public void setUp(){
+    public void setUp() {
         initDriver();
         navigateToBaseUrl();
         initFlows();
@@ -47,19 +47,18 @@ public class BaseTest {
     private void createTestUser() {
         UserIdentityData identity = getUniqueUser();
         AccountRegistrationData profile = getMinimalAccountRegUser();
-        testUser = new TestUser(profile,identity);
+        testUser = new TestUser(profile, identity);
     }
 
     private UserIdentityData getUniqueUser() {
-       return UserIdentityDataFactory.newUniqueUser();
+        return UserIdentityDataFactory.newUniqueUser();
     }
 
-    private AccountRegistrationData getMinimalAccountRegUser(){
+    private AccountRegistrationData getMinimalAccountRegUser() {
         return AccountRegistrationTestDataFactory.minimalRegistrationUser();
     }
 
     public WebDriver getDriver() {
         return driverContext.getDriver();
     }
-
 }

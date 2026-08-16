@@ -11,8 +11,7 @@ public class CaptureScreenshot {
 
     private static final Logger log = LoggerFactory.getLogger(CaptureScreenshot.class);
 
-    private CaptureScreenshot() {
-    }
+    private CaptureScreenshot() {}
 
     @Attachment(value = "Failure screenshot", type = "image/png")
     public static byte[] captureScreenshotAndAttach(WebDriver driver) {
@@ -24,11 +23,10 @@ public class CaptureScreenshot {
             log.warn("Driver does not implement TakesScreenshot, cannot take screenshot");
             return new byte[0];
         }
-            try {
+        try {
             return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-        }
-        catch (Exception e) {
-            log.warn("Unable to take screenshot on failure",e);
+        } catch (Exception e) {
+            log.warn("Unable to take screenshot on failure", e);
         }
         return new byte[0];
     }

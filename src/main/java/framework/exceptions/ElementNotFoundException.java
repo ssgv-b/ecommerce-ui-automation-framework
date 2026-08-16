@@ -1,6 +1,6 @@
 package framework.exceptions;
 
-public class ElementNotFoundException extends FrameworkException{
+public class ElementNotFoundException extends FrameworkException {
     public ElementNotFoundException(String message) {
         super(message);
     }
@@ -8,5 +8,4 @@ public class ElementNotFoundException extends FrameworkException{
     public ElementNotFoundException(String message, Throwable cause) {
         super(message, cause);
     }
-
 }

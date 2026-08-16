@@ -49,13 +49,13 @@ public class UserIdentityData {
         }
 
         public UserIdentityData build() {
-            if(userName==null || userName.isBlank()) {
+            if (userName == null || userName.isBlank()) {
                 throw new IllegalStateException("User name is required");
             }
-            if(userEmail==null || userEmail.isBlank()) {
+            if (userEmail == null || userEmail.isBlank()) {
                 throw new IllegalStateException("User email is required");
             }
-            if(userPassword==null || userPassword.isBlank()) {
+            if (userPassword == null || userPassword.isBlank()) {
                 throw new IllegalStateException("User password is required");
             }
             return new UserIdentityData(this);

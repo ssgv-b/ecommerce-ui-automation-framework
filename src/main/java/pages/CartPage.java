@@ -6,14 +6,13 @@ import framework.exceptions.ElementNotFoundException;
 import framework.exceptions.PageStateException;
 import framework.utils.ProductTextParser;
 import framework.utils.TextNormalizer;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import models.CartItem;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 public class CartPage extends BasePage {
     public CartPage(DriverContext driverContext) {
@@ -39,8 +38,7 @@ public class CartPage extends BasePage {
             cartItems.getFirst().findElement(removeFromCartButton).click();
             try {
                 wait.until(driver -> getCurrentCartRows().size() < previousCount);
-            }
-            catch (TimeoutException e) {
+            } catch (TimeoutException e) {
                 throw new PageStateException("Cart row count did not decrease after remove click", e);
             }
         }
@@ -58,14 +56,17 @@ public class CartPage extends BasePage {
         return getTextWhenVisible(cartEmptyMessage);
     }
 
-    public List <CartItem> readCartItems() {
+    public List<CartItem> readCartItems() {
         List<WebElement> cartRows = waitForCartRows();
         List<CartItem> cartItems = new ArrayList<>();
         for (WebElement cartRow : cartRows) {
             String name = cartRow.findElement(cartProductName).getText();
-            BigDecimal price = ProductTextParser.parsePrice(cartRow.findElement(cartPrice).getText());
-            int quantity = Integer.parseInt(cartRow.findElement(cartQuantity).getText().trim());
-            BigDecimal totalPrice = ProductTextParser.parsePrice(cartRow.findElement(cartTotalPrice).getText());
+            BigDecimal price =
+                    ProductTextParser.parsePrice(cartRow.findElement(cartPrice).getText());
+            int quantity =
+                    Integer.parseInt(cartRow.findElement(cartQuantity).getText().trim());
+            BigDecimal totalPrice = ProductTextParser.parsePrice(
+                    cartRow.findElement(cartTotalPrice).getText());
 
             CartItem cartItem = new CartItem(name, price, quantity, totalPrice);
             cartItems.add(cartItem);
@@ -74,13 +75,13 @@ public class CartPage extends BasePage {
     }
 
     public String getCartItemName() {
-        List <WebElement> products = waitForCartRows();
+        List<WebElement> products = waitForCartRows();
         return products.stream()
-                .map(e-> TextNormalizer.normalizeText(e.findElement(cartProductName)
-                        .getText()))
+                .map(e -> TextNormalizer.normalizeText(
+                        e.findElement(cartProductName).getText()))
                 .findFirst()
-                .orElseThrow(()->new ElementNotFoundException("No products found in cart!"));
-        }
+                .orElseThrow(() -> new ElementNotFoundException("No products found in cart!"));
+    }
 
     public CheckoutPage goToCheckoutLoggedIn() {
         click(goToCheckoutButton);
@@ -94,5 +95,4 @@ public class CartPage extends BasePage {
         click(registerLogInModalButton);
         return new LoginPage(driverContext);
     }
-
 }

@@ -42,5 +42,4 @@ public class LoginPage extends BasePage {
     public String getExistingEmailErrorMessage() {
         return getTextWhenVisible(createExistingEmailError);
     }
-
 }

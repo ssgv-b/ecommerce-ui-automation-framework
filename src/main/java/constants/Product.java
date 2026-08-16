@@ -22,7 +22,8 @@ public enum Product {
     COTTON_MULL_EMBROIDERED_DRESS("Cotton Mull Embroidered Dress", new BigDecimal("1190")),
     BLUE_COTTON_INDIE_MICKEY_DRESS("Blue Cotton Indie Mickey Dress", new BigDecimal("1530")),
     LONG_MAXI_TULLE_FANCY_DRESS_UP_OUTFITS_PINK("Long Maxi Tulle Fancy Dress Up Outfits -Pink", new BigDecimal("1600")),
-    SLEEVELESS_UNICORN_PRINT_FIT_FLARE_NET_DRESS_MULTI("Sleeveless Unicorn Print Fit & Flare Net Dress - Multi", new BigDecimal("1100")),
+    SLEEVELESS_UNICORN_PRINT_FIT_FLARE_NET_DRESS_MULTI(
+            "Sleeveless Unicorn Print Fit & Flare Net Dress - Multi", new BigDecimal("1100")),
     COLOUR_BLOCKED_SHIRT_SKY_BLUE("Colour Blocked Shirt – Sky Blue", new BigDecimal("849")),
     PURE_COTTON_V_NECK_T_SHIRT("Pure Cotton V-Neck T-Shirt", new BigDecimal("1299")),
     GREEN_SIDE_PLACKET_DETAIL_T_SHIRT("Green Side Placket Detail T-Shirt", new BigDecimal("1000")),
@@ -45,7 +46,13 @@ public enum Product {
     private final String condition;
     private final String brandName;
 
-    Product(String productName, BigDecimal productPrice, String categories, String availability, String condition, String brandName) {
+    Product(
+            String productName,
+            BigDecimal productPrice,
+            String categories,
+            String availability,
+            String condition,
+            String brandName) {
         this.productName = productName;
         this.productPrice = productPrice;
         this.categories = categories;

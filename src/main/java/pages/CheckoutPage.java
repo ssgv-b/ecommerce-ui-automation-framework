@@ -4,11 +4,10 @@ import framework.base.BasePage;
 import framework.drivers.DriverContext;
 import framework.exceptions.ElementNotFoundException;
 import framework.exceptions.PageStateException;
+import java.util.List;
 import models.Address;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
-import java.util.List;
 
 public class CheckoutPage extends BasePage {
     public CheckoutPage(DriverContext driverContext) {
@@ -111,6 +110,4 @@ public class CheckoutPage extends BasePage {
         }
         return null;
     }
-
 }
-
