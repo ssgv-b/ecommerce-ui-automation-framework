@@ -1,8 +1,7 @@
 package framework.testdata;
 
-import models.UserIdentityData;
-
 import java.util.UUID;
+import models.UserIdentityData;
 
 public class UserIdentityDataFactory {
 
@@ -16,7 +15,7 @@ public class UserIdentityDataFactory {
     }
 
     private static String generateUniqueSuffix() {
-        return UUID.randomUUID().toString().replace("-","");
+        return UUID.randomUUID().toString().replace("-", "");
     }
 
     public static UserIdentityData invalidUser() {

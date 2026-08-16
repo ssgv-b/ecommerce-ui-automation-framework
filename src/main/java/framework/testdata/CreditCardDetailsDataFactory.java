@@ -23,5 +23,4 @@ public class CreditCardDetailsDataFactory {
         builder.expiryYear(2028);
         return builder.build();
     }
-
 }

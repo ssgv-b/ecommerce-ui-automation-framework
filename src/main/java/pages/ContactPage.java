@@ -2,11 +2,10 @@ package pages;
 
 import framework.base.BasePage;
 import framework.drivers.DriverContext;
-import org.openqa.selenium.By;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.openqa.selenium.By;
 
 public class ContactPage extends BasePage {
     public ContactPage(DriverContext driverContext) {
@@ -34,8 +33,8 @@ public class ContactPage extends BasePage {
     public void submitContactForm() {
         click(submitFormButton);
         acceptAlertIfPresent();
-
     }
+
     public void uploadFile() {
         Path filePath = Paths.get(System.getProperty("user.dir"), "src/test/resources/testfile.txt");
         if (!Files.exists(filePath)) {
@@ -52,5 +51,4 @@ public class ContactPage extends BasePage {
         click(homeButton);
         return new HomePage(driverContext);
     }
-
 }

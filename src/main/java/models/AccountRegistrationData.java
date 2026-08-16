@@ -55,9 +55,13 @@ public class AccountRegistrationData {
         return birthYear;
     }
 
-    public boolean getNewsletterSignUp() { return newsletterSignUp; }
+    public boolean getNewsletterSignUp() {
+        return newsletterSignUp;
+    }
 
-    public boolean getSpecialOfferSignUp() { return specialOfferSignUp; }
+    public boolean getSpecialOfferSignUp() {
+        return specialOfferSignUp;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -67,7 +71,9 @@ public class AccountRegistrationData {
         return lastName;
     }
 
-    public String getCompany() { return company; }
+    public String getCompany() {
+        return company;
+    }
 
     public String getAddress1() {
         return address1;
@@ -227,7 +233,6 @@ public class AccountRegistrationData {
 
             return new AccountRegistrationData(this);
         }
-
     }
 
     public Address getAddressRegistrationData() {

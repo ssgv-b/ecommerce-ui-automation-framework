@@ -9,5 +9,4 @@ public class PageStateException extends FrameworkException {
     public PageStateException(String message) {
         super(message);
     }
-
 }

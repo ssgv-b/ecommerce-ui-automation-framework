@@ -1,6 +1,9 @@
 package components;
 
 import framework.drivers.DriverContext;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -8,11 +11,6 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
-
 
 public class BaseComponent {
     protected final DriverContext driverContext;
@@ -37,7 +35,6 @@ public class BaseComponent {
             WebElement updated = waitAndScrollToElement(locator);
             updated.click();
         }
-
     }
 
     protected void click(WebElement element) {
@@ -90,9 +87,7 @@ public class BaseComponent {
 
     protected WebElement waitAndScrollToElement(By locator) {
         WebElement element = waitForVisibleElement(locator);
-        new Actions(driver)
-                .scrollToElement(element)
-                .perform();
+        new Actions(driver).scrollToElement(element).perform();
         return element;
     }
 

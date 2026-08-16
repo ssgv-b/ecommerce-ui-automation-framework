@@ -61,5 +61,4 @@ public class AccountRegistrationTestDataFactory {
         builder.mobileNumber("+14155427269");
         return builder.build();
     }
-
 }

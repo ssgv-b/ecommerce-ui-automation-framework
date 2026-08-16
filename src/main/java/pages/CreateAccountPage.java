@@ -9,6 +9,7 @@ import org.openqa.selenium.By;
 
 public class CreateAccountPage extends BasePage {
     private final UserIdentityData userData;
+
     public CreateAccountPage(DriverContext driverContext, UserIdentityData userData) {
         super(driverContext);
         By createAccountPageSignal = By.xpath("//form[@action='/signup']");
@@ -63,7 +64,7 @@ public class CreateAccountPage extends BasePage {
     }
 
     private void setAddress(AccountRegistrationData data) {
-        //Optional fields
+        // Optional fields
         String company = TextNormalizer.safeTrim(data.getCompany());
         String address2 = TextNormalizer.safeTrim(data.getAddress2());
         if (!company.isBlank()) {
@@ -85,7 +86,6 @@ public class CreateAccountPage extends BasePage {
         setPreferences(data);
         setAddress(data);
     }
-
 
     private void setDateOfBirth(AccountRegistrationData data) {
         String day = TextNormalizer.safeTrim(data.getBirthDay());
@@ -109,8 +109,9 @@ public class CreateAccountPage extends BasePage {
         switch (title) {
             case "mr" -> click(titleMrRadioBtn);
             case "mrs" -> click(titleMrsRadioBtn);
+            default -> throw new IllegalArgumentException(
+                    "Unsupported title for registration. Allowed values are Mr/Mrs.");
         }
-
     }
 
     private String titleResolver(AccountRegistrationData data) {
@@ -123,8 +124,7 @@ public class CreateAccountPage extends BasePage {
                 return title;
             }
             default -> throw new IllegalArgumentException(
-                    "Unsupported title for registration. Allowed values are Mr/Mrs."
-            );
+                    "Unsupported title for registration. Allowed values are Mr/Mrs.");
         }
     }
 

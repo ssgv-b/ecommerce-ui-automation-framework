@@ -9,6 +9,7 @@ import pages.*;
 
 public class TestFlows {
     private final DriverContext driverContext;
+
     public TestFlows(DriverContext driverContext) {
         this.driverContext = driverContext;
     }
@@ -23,14 +24,15 @@ public class TestFlows {
         return productsPage.getNavBar().navigateToCart();
     }
 
-    public OrderPlacedPage placeOrderFromCheckoutAsLoggedInUser(CheckoutPage checkoutPage, String comment, CreditCardDetailsData data) {
+    public OrderPlacedPage placeOrderFromCheckoutAsLoggedInUser(
+            CheckoutPage checkoutPage, String comment, CreditCardDetailsData data) {
         checkoutPage.enterOrderComment(comment);
         PaymentPage paymentPage = checkoutPage.placeOrder();
         return paymentPage.enterPaymentDetailsAndPlaceOrder(data);
     }
 
-    public LoginPage createMinimalAccountAndLogOut(CreateAccountPage createAccountPage,
-                                         AccountRegistrationData registrationData) {
+    public LoginPage createMinimalAccountAndLogOut(
+            CreateAccountPage createAccountPage, AccountRegistrationData registrationData) {
         AccountCreatedPage accountCreatedPage = createAccountPage.registerAccount(registrationData);
         HomePage homePage = accountCreatedPage.continueToHomePage();
         return homePage.getNavBar().logOut();

@@ -1,7 +1,7 @@
 package tests.login;
 
-import framework.helpers.AccountCleanupHelper;
 import framework.base.BaseTest;
+import framework.helpers.AccountCleanupHelper;
 import framework.listeners.RetryAnalyzer;
 import framework.testdata.AccountRegistrationTestDataFactory;
 import framework.testdata.UserIdentityDataFactory;
@@ -17,7 +17,9 @@ public class LoginTests extends BaseTest {
     private static final String INVALID_LOGIN_ERROR = "Your email or password is incorrect!";
     private static final String EXISTING_EMAIL_ERROR = "Email Address already exist!";
 
-    @Test(retryAnalyzer = RetryAnalyzer.class, groups = {"regression", "auth", "destructive", "slow"})
+    @Test(
+            retryAnalyzer = RetryAnalyzer.class,
+            groups = {"regression", "auth", "destructive", "slow"})
     public void registerUserAndDelete() {
         UserIdentityData userData = UserIdentityDataFactory.newUniqueUser();
         AccountRegistrationData registrationData = AccountRegistrationTestDataFactory.validRegistrationUserMale();

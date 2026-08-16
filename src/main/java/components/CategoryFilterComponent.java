@@ -2,11 +2,10 @@ package components;
 
 import framework.drivers.DriverContext;
 import framework.exceptions.ElementNotFoundException;
+import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import pages.ProductsPage;
-
-import java.util.List;
 
 public class CategoryFilterComponent extends BaseComponent {
     public CategoryFilterComponent(DriverContext driverContext) {
@@ -25,26 +24,26 @@ public class CategoryFilterComponent extends BaseComponent {
     }
 
     private void ensureExpandedCategory(WebElement selectedCategory) {
-        if (!selectedCategory.findElements(subCategoryList).isEmpty())
-            return;
+        if (!selectedCategory.findElements(subCategoryList).isEmpty()) return;
         WebElement expander = selectedCategory.findElement(categoryExpander);
         click(expander);
         wait.until(driver -> !selectedCategory.findElements(subCategoryList).isEmpty());
     }
 
-
     private WebElement selectMainCategory(String mainCategory) {
         List<WebElement> categoryElements = driver.findElements(categoryList);
-        return categoryElements.stream().filter(category ->
-                        category.getText().equalsIgnoreCase(mainCategory)).findFirst()
+        return categoryElements.stream()
+                .filter(category -> category.getText().equalsIgnoreCase(mainCategory))
+                .findFirst()
                 .orElseThrow(() -> new ElementNotFoundException("Category " + mainCategory + " not found."));
     }
 
     private void selectSubCategory(WebElement selectedCategory, String subCategory) {
         List<WebElement> subCategoryElements = selectedCategory.findElements(subCategoryList);
-        WebElement selectedSubCategory = subCategoryElements.stream().filter(category ->
-                category.getText().trim().equalsIgnoreCase(subCategory)).findFirst().orElseThrow(() -> new ElementNotFoundException("Subcategory " + subCategory + " not found."));
+        WebElement selectedSubCategory = subCategoryElements.stream()
+                .filter(category -> category.getText().trim().equalsIgnoreCase(subCategory))
+                .findFirst()
+                .orElseThrow(() -> new ElementNotFoundException("Subcategory " + subCategory + " not found."));
         click(selectedSubCategory);
     }
-
 }

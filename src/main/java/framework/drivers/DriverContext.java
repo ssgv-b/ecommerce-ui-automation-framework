@@ -1,8 +1,7 @@
 package framework.drivers;
 
-import org.openqa.selenium.WebDriver;
-
 import java.time.Duration;
+import org.openqa.selenium.WebDriver;
 
 public class DriverContext {
     private final WebDriver driver;

@@ -1,6 +1,6 @@
 package framework.exceptions;
 
-public abstract class FrameworkException extends RuntimeException{
+public abstract class FrameworkException extends RuntimeException {
 
     public FrameworkException(String message) {
         super(message);

@@ -1,13 +1,20 @@
 package tests.orders;
 
-import framework.helpers.AccountCleanupHelper;
+import static framework.utils.TestAssertions.assertDeliveryAndInvoiceAddressesMatch;
+
 import framework.base.BaseTest;
+import framework.helpers.AccountCleanupHelper;
 import framework.testdata.AccountRegistrationTestDataFactory;
 import framework.testdata.CreditCardDetailsDataFactory;
 import framework.testdata.UserIdentityDataFactory;
 import framework.utils.ConfigReader;
 import framework.utils.FileDownloadUtils;
 import framework.utils.TestAssertions;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.Instant;
 import models.AccountRegistrationData;
 import models.CreditCardDetailsData;
 import models.TestUser;
@@ -15,14 +22,6 @@ import models.UserIdentityData;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.*;
-
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.Duration;
-import java.time.Instant;
-
-import static framework.utils.TestAssertions.assertDeliveryAndInvoiceAddressesMatch;
 
 public class PlaceOrderTests extends BaseTest {
     private static final String ORDER_COMMENT = "This is a test order comment.";
@@ -44,7 +43,8 @@ public class PlaceOrderTests extends BaseTest {
             CheckoutPage checkoutPage = cartPage.goToCheckoutLoggedIn();
             assertDeliveryAndInvoiceAddressesMatch(checkoutPage);
             CreditCardDetailsData cardData = CreditCardDetailsDataFactory.validCreditCardDetails();
-            OrderPlacedPage orderPlacedPage = flows.placeOrderFromCheckoutAsLoggedInUser(checkoutPage, ORDER_COMMENT, cardData);
+            OrderPlacedPage orderPlacedPage =
+                    flows.placeOrderFromCheckoutAsLoggedInUser(checkoutPage, ORDER_COMMENT, cardData);
             Assert.assertEquals(orderPlacedPage.getOrderSuccessMessage(), ORDER_SUCCESS_MESSAGE);
             homePage = orderPlacedPage.continueShopping();
             TestAssertions.deleteAccountAndAssertHomePage(homePage);
@@ -69,7 +69,8 @@ public class PlaceOrderTests extends BaseTest {
             CheckoutPage checkoutPage = cartPage.goToCheckoutLoggedIn();
             assertDeliveryAndInvoiceAddressesMatch(checkoutPage);
             CreditCardDetailsData cardData = CreditCardDetailsDataFactory.additionalValidCreditCardDetails();
-            OrderPlacedPage orderPlacedPage = flows.placeOrderFromCheckoutAsLoggedInUser(checkoutPage, ORDER_COMMENT, cardData);
+            OrderPlacedPage orderPlacedPage =
+                    flows.placeOrderFromCheckoutAsLoggedInUser(checkoutPage, ORDER_COMMENT, cardData);
             Assert.assertEquals(orderPlacedPage.getOrderSuccessMessage(), ORDER_SUCCESS_MESSAGE);
             homePage = orderPlacedPage.continueShopping();
             TestAssertions.deleteAccountAndAssertHomePage(homePage);
@@ -92,7 +93,8 @@ public class PlaceOrderTests extends BaseTest {
             CheckoutPage checkoutPage = cartPage.goToCheckoutLoggedIn();
             assertDeliveryAndInvoiceAddressesMatch(checkoutPage);
             CreditCardDetailsData cardData = CreditCardDetailsDataFactory.additionalValidCreditCardDetails();
-            OrderPlacedPage orderPlacedPage = flows.placeOrderFromCheckoutAsLoggedInUser(checkoutPage, ORDER_COMMENT, cardData);
+            OrderPlacedPage orderPlacedPage =
+                    flows.placeOrderFromCheckoutAsLoggedInUser(checkoutPage, ORDER_COMMENT, cardData);
             Assert.assertEquals(orderPlacedPage.getOrderSuccessMessage(), ORDER_SUCCESS_MESSAGE);
 
             homePage = orderPlacedPage.continueShopping();
@@ -124,16 +126,13 @@ public class PlaceOrderTests extends BaseTest {
             CheckoutPage checkoutPage = cartPage.goToCheckoutLoggedIn();
             assertDeliveryAndInvoiceAddressesMatch(checkoutPage);
             CreditCardDetailsData cardData = CreditCardDetailsDataFactory.validCreditCardDetails();
-            OrderPlacedPage orderPlacedPage = flows.placeOrderFromCheckoutAsLoggedInUser(checkoutPage, INVOICE_ORDER_COMMENT, cardData);
+            OrderPlacedPage orderPlacedPage =
+                    flows.placeOrderFromCheckoutAsLoggedInUser(checkoutPage, INVOICE_ORDER_COMMENT, cardData);
             Assert.assertEquals(orderPlacedPage.getOrderSuccessMessage(), ORDER_SUCCESS_MESSAGE);
             Instant downloadStartedAt = Instant.now();
             orderPlacedPage.downloadInvoice();
             File invoice = FileDownloadUtils.waitForDownloadedFile(
-                    downloadPath,
-                    "invoice",
-                    Duration.ofSeconds(10),
-                    downloadStartedAt
-            );
+                    downloadPath, "invoice", Duration.ofSeconds(10), downloadStartedAt);
             FileDownloadUtils.assertValidDownloadedFile(invoice, "invoice");
             homePage = orderPlacedPage.continueShopping();
             TestAssertions.deleteAccountAndAssertHomePage(homePage);

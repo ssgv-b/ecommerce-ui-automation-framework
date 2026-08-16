@@ -10,8 +10,8 @@ public class ProductDetails {
     private final String condition;
     private final String brand;
 
-    public ProductDetails(String name, String category, BigDecimal price,
-                          String availability, String condition, String brand) {
+    public ProductDetails(
+            String name, String category, BigDecimal price, String availability, String condition, String brand) {
         this.name = name;
         this.category = category;
         this.price = price;
@@ -20,11 +20,27 @@ public class ProductDetails {
         this.brand = brand;
     }
 
-    public String getName() { return name; }
-    public String getCategory() { return category; }
-    public BigDecimal getPrice() { return price; }
-    public String getAvailability() { return availability; }
-    public String getCondition() { return condition; }
-    public String getBrand() { return brand; }
-}
+    public String getName() {
+        return name;
+    }
 
+    public String getCategory() {
+        return category;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public String getAvailability() {
+        return availability;
+    }
+
+    public String getCondition() {
+        return condition;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+}

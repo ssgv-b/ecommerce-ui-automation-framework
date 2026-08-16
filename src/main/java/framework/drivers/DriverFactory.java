@@ -2,17 +2,6 @@ package framework.drivers;
 
 import constants.ConfigKeys;
 import framework.utils.ConfigReader;
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -24,7 +13,16 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
+import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DriverFactory {
     private static final ThreadLocal<WebDriver> driverRegistry = new ThreadLocal<>();
@@ -52,8 +50,7 @@ public class DriverFactory {
         String binary = ConfigReader.getProperty(ConfigKeys.CHROME_BINARY, "");
         try {
             driver = new ChromeDriver(options);
-        }
-        catch (WebDriverException e) {
+        } catch (WebDriverException e) {
             throw new RuntimeException(
                     "Failed to create ChromeDriver (headless=" + headless + ", binary=" + binary + ")", e);
         }
@@ -61,7 +58,6 @@ public class DriverFactory {
             driver.manage().window().maximize();
         }
         return driver;
-
     }
 
     private static ChromeOptions buildChromeOptions(boolean headless) {
@@ -76,14 +72,11 @@ public class DriverFactory {
         options.addArguments("--disable-save-password-bubble");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
-        options.addArguments(
-                "--host-resolver-rules=" +
-                        "MAP *.googlesyndication.com ~NOTFOUND, " +
-                        "MAP *.doubleclick.net ~NOTFOUND, " +
-                        "MAP *.adservice.google.com ~NOTFOUND, " +
-                        "MAP *.googletagmanager.com ~NOTFOUND, " +
-                        "MAP *.google-analytics.com ~NOTFOUND"
-        );
+        options.addArguments("--host-resolver-rules=" + "MAP *.googlesyndication.com ~NOTFOUND, "
+                + "MAP *.doubleclick.net ~NOTFOUND, "
+                + "MAP *.adservice.google.com ~NOTFOUND, "
+                + "MAP *.googletagmanager.com ~NOTFOUND, "
+                + "MAP *.google-analytics.com ~NOTFOUND");
 
         options.addArguments("--host-rules=MAP *.googlesyndication.com ~NOTFOUND");
 
@@ -98,7 +91,7 @@ public class DriverFactory {
         prefs.put("safebrowsing.enabled", true);
         prefs.put("credentials_enable_service", false);
         prefs.put("profile.password_manager_enabled", false);
-        options.setExperimentalOption("prefs",prefs);
+        options.setExperimentalOption("prefs", prefs);
 
         String binary = ConfigReader.getProperty(ConfigKeys.CHROME_BINARY, "");
         if (!binary.isBlank()) {
@@ -121,8 +114,7 @@ public class DriverFactory {
         // MIME types
         options.addPreference(
                 "browser.helperApps.neverAsk.saveToDisk",
-                "application/pdf,application/octet-stream,text/csv,image/png"
-        );
+                "application/pdf,application/octet-stream,text/csv,image/png");
 
         // disable password manager
         options.addPreference("signon.rememberSignons", false);
@@ -134,14 +126,12 @@ public class DriverFactory {
         return options;
     }
 
-
     private static FirefoxDriver createFirefoxDriver(boolean headless) {
         FirefoxDriver driver;
         FirefoxOptions options = buildFirefoxOptions(headless);
         try {
             driver = new FirefoxDriver(options);
-        }
-        catch (WebDriverException e) {
+        } catch (WebDriverException e) {
             throw new RuntimeException("Failed to create FirefoxDriver for: ", e);
         }
         if (!headless) {
@@ -154,11 +144,12 @@ public class DriverFactory {
         String url = ConfigReader.getProperty(ConfigKeys.REMOTE_URL, "http://localhost:4444");
         boolean isRemote = readBoolean(ConfigKeys.REMOTE, false);
         if (isRemote) {
-            Capabilities options = switch (browserType) {
-                case "chrome" -> buildChromeOptions(headless);
-                case "firefox" -> buildFirefoxOptions(headless);
-                default -> throw new RuntimeException("Unsupported browser for remote " + browserType);
-            };
+            Capabilities options =
+                    switch (browserType) {
+                        case "chrome" -> buildChromeOptions(headless);
+                        case "firefox" -> buildFirefoxOptions(headless);
+                        default -> throw new RuntimeException("Unsupported browser for remote " + browserType);
+                    };
             RemoteWebDriver remoteWebDriver = new RemoteWebDriver(toGridURL(url), options);
             if (!headless) {
                 remoteWebDriver.manage().window().maximize();
@@ -175,14 +166,12 @@ public class DriverFactory {
 
     public static void quitDriver() {
         WebDriver driver = driverRegistry.get();
-        if(driver!=null) {
+        if (driver != null) {
             try {
                 driver.quit();
-            }
-            catch (WebDriverException e) {
+            } catch (WebDriverException e) {
                 log.warn("Driver quit did not complete cleanly: {}", e.getMessage());
-            }
-            finally {
+            } finally {
                 driverRegistry.remove();
             }
         }

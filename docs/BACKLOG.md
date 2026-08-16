@@ -131,11 +131,10 @@ Legend: ✅ done · 🔶 in progress · ⬜ not started
 **Verification:** compiles; interaction hardening is sound by construction (re-locate + retry). The earlier 3× `-Pci` green run *predates* the stale-retry code, so it validates the config fix + no-regression, not the retry itself — staleness is intermittent and can't be deterministically reproduced. The added retry logging is the ongoing signal.
 **Still open (deferred, own follow-up if it recurs):** the CDP `Node...` failure inside `CreateAccountPage`'s constructor wait is a *different* shape (detach during the `ExpectedConditions` poll, which doesn't ignore `WebDriverException`), not a located-then-stale race — a re-locate-after-return retry wouldn't catch it. Leave it to `maxRetryCount`; add a targeted `.ignoring(...)` on the page-signal wait only if it recurs.
 
-### ECF-205 · Repo hygiene cleanup — ⬜
-**Branch:** `chore/repo-hygiene`
+### ECF-205 · Repo hygiene cleanup — ✅ DONE
+**Branch:** folded into `chore/static-analysis` (ECF-301) — too small for its own PR.
 **Problem:** Tracked build output (`allure-report/`, multiple `allure-results/`, `downloads/invoice.txt`) and `.DS_Store` files pollute the tree even though gitignored.
-**Scope:** `git rm --cached` the tracked output/artifacts; verify `.gitignore` covers all of them.
-**Done when:** `git status` is clean after a full test+report run; no generated artifacts tracked.
+**Delivered:** Most of the problem statement was already stale — `.gitignore` covers `/target/` (CI `target/downloads`), `/allure-report/`, `/allure-results/`, `/.allure/`, `/downloads/`, and `.DS_Store` (both root and `**/`), and none of those were tracked. The only genuinely tracked artifact was `src/test/resources/downloads/invoice.txt` — a stale 59-byte captured invoice referenced by no test (the download test reads `downloadDir`, i.e. `downloads/` / `target/downloads/`, never the resources dir). It slipped the root-anchored `/downloads/` rule. `git rm`'d it. `git status` is now clean after a test+report run.
 
 ### ECF-206 · Introduce custom exception hierarchy — ✅ DONE (bucket 1)
 **Branch:** `refactor/custom-exceptions`

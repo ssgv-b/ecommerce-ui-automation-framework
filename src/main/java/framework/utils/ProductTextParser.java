@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 
 public class ProductTextParser {
 
-    private ProductTextParser() {
-    }
+    private ProductTextParser() {}
+
     private static final String CURRENCY_PREFIX = "Rs.";
 
     public static BigDecimal parsePrice(String priceValue) {

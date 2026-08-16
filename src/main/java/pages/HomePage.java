@@ -2,14 +2,13 @@ package pages;
 
 import components.AddToCartModalComponent;
 import components.BrandFilterComponent;
-import framework.drivers.DriverContext;
+import components.CategoryFilterComponent;
 import framework.base.BasePage;
+import framework.drivers.DriverContext;
 import framework.exceptions.ElementNotFoundException;
 import framework.utils.TextNormalizer;
-import org.openqa.selenium.*;
-import components.CategoryFilterComponent;
-
 import java.util.List;
+import org.openqa.selenium.*;
 
 public class HomePage extends BasePage {
 
@@ -39,7 +38,7 @@ public class HomePage extends BasePage {
     }
 
     public String getCurrentUsername() {
-       String fullUserText =  getTextWhenVisible(loggedInAsUsername);
+        String fullUserText = getTextWhenVisible(loggedInAsUsername);
         return fullUserText.replace("Logged in as ", "").trim();
     }
 
@@ -51,10 +50,14 @@ public class HomePage extends BasePage {
     private WebElement getCarouselProductName(String productName) {
         List<WebElement> carouselItems = driver.findElements(carouselProductWrapper);
         String normalizedTarget = TextNormalizer.normalizeText(productName);
-         return carouselItems.stream().filter(c->TextNormalizer.normalizeText(c.findElement(carouselProductName)
-                .getText()).equals(normalizedTarget)).findFirst()
-                .orElseThrow(()-> new ElementNotFoundException("Carousel with name " + productName + " not found!"));
+        return carouselItems.stream()
+                .filter(c -> TextNormalizer.normalizeText(
+                                c.findElement(carouselProductName).getText())
+                        .equals(normalizedTarget))
+                .findFirst()
+                .orElseThrow(() -> new ElementNotFoundException("Carousel with name " + productName + " not found!"));
     }
+
     public void addRecommendedProductToCart(String productName) {
         goToCarouselSection();
         WebElement carouselProduct = getCarouselProductName(productName);

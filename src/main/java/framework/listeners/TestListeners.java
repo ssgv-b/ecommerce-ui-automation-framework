@@ -1,19 +1,18 @@
 package framework.listeners;
 
+import static framework.listeners.CaptureScreenshot.captureScreenshotAndAttach;
+
 import framework.base.BaseTest;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.openqa.selenium.WebDriver;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static framework.listeners.CaptureScreenshot.captureScreenshotAndAttach;
-
 public class TestListeners implements ITestListener {
-    private final ThreadLocal<TestExecutionContext> testStartData =  new ThreadLocal<>();
+    private final ThreadLocal<TestExecutionContext> testStartData = new ThreadLocal<>();
 
     @Override
     public void onTestStart(ITestResult result) {
@@ -64,16 +63,11 @@ public class TestListeners implements ITestListener {
 
     private TestExecutionContext getTestContext(ITestResult result) {
         String methodName = result.getMethod().getMethodName();
-        String[] methodGroups = result.getMethod().getGroups();
-        Object[] methodParams = result.getParameters();
-        return new TestExecutionContext(methodName, methodGroups,
-                methodParams);
+        return new TestExecutionContext(methodName);
     }
 
     private String getThrowableMessage(ITestResult result) {
-        return result.getThrowable() == null
-                ? null
-                : result.getThrowable().getMessage();
+        return result.getThrowable() == null ? null : result.getThrowable().getMessage();
     }
 
     private TestExecutionContext getCurrentContext(ITestResult result) {
