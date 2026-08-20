@@ -156,10 +156,16 @@ Legend: ✅ done · 🔶 in progress · ⬜ not started
 **Scope:** Spotless/Checkstyle + SpotBugs or PMD in the build. Fix flags, including dead code (`TestExecutionContext.getGroupName/getParams` look unused).
 **Done when:** `mvn verify` fails on style/bug violations; baseline is clean.
 
-### ECF-302 · Locator consistency pass — ⬜
+### ECF-302 · Locator consistency pass — ✅ DONE
 **Branch:** `refactor/locator-consistency`
-**Scope:** Normalize text XPath to `normalize-space()`, prefer `data-qa` hooks where present, reduce brittle `contains(text(),...)`.
-**Done when:** No raw whitespace-sensitive text XPath remains in hot-path components.
+**Scope:** Normalize text XPath, prefer `data-qa`/id hooks where present, reduce brittle `contains(text(),...)`.
+**Findings (live-DOM survey of automationexercise):** no exact `text()=` matches existed, so the "whitespace-sensitive" clause was already satisfied (all text locators used `contains()`, which tolerates whitespace). The real brittleness was matching on *displayed copy*. Checked all 8 text locators against the live DOM.
+**Delivered:**
+- `cartEmptyMessage` → `#empty_cart b` (id-anchored; keeps the exact "Cart is empty!" text the assertion expects — the `<p>` would have returned the whole sentence and broken `assertEquals`).
+- `placeOrderButton` → `//a[@href='/payment']` (href is specific; `.check_out` is a generic class reused across 3 pages — cart checkout, order-placed download, place order).
+- **View Cart dedup:** `ProductDetailsPage` had a brittle `//u[contains(text(),'View Cart')]` duplicate of what `AddToCartModalComponent` already owned. Removed it; `ProductDetailsPage` now delegates to `modal.goToCart()`. Fixed the modal component's locators to genuinely scope (`element.findElement(By.cssSelector(...))` — the old leading-`//` XPath searched from document root, ignoring the modal, and could hit the nav `/view_cart` link behind the backdrop).
+- **Kept as text (no better hook exists, confirmed via DOM):** the 4 `ProductDetailsPage` label fields (plain `<p>`, and `contains(.,…)` is correct — survives the `<b>` nesting `text()` would miss) and `loggedInAsUsername` (dynamic nav text).
+**Done when:** ✅ Hot-path locators use stable id/href/scoped hooks where available; brittle text XPath removed or confirmed unavoidable.
 
 ### ECF-303 · Expand negative / edge coverage — ⬜
 **Branch:** `test/negative-coverage`
@@ -181,8 +187,9 @@ Legend: ✅ done · 🔶 in progress · ⬜ not started
 **Scope:** Short doc capturing the ad-blocking approach, locator conventions, and the resilient-click contract.
 **Done when:** A `docs/` page describes the ad-blocking + click/wait strategy.
 
-### ECF-307 · HomePage slider intermittent load failure — ✅ DONE
+### ECF-307 · HomePage slider intermittent load failure — 🔶 RECURRED (reopened)
 **Branch:** `fix/homepage-slider-flake`
+**⚠️ Recurred 2026-08-17:** flake reappeared in CI on the first run of the ECF-301 PR (passed on rerun). The presence-wait fix below **reduced but did not eliminate** it — presence-of-`#slider` still intermittently times out on a cold CI runner (the node genuinely isn't in the DOM yet, not a render issue). **Next step (do not just bump the timeout):** handle the cookie-consent step *before* asserting the slider, or give the home signal its own dedicated longer wait. Deferred — revisit when it becomes a frequent blocker.
 **Problem:** `HomePage.assertOnHomePage()` waited on `homePageIdentifier` (`By.id("slider")`) via `waitForVisibleElement` and intermittently failed in headless CI — passed on commit, failed on merge, same code — a timing/transient failure, not a locator problem.
 **Root cause:** `visibilityOfElementLocated` requires `isDisplayed()` == true, i.e. **non-zero rendered size**. `#slider` is a carousel whose height depends on its slide images/CSS loading; in headless CI that rendering lags, so the element is present in the DOM but has zero effective size inside the wait window → visibility times out intermittently. (Confirms why the earlier locator swap didn't help — it never touched the wait condition.)
 **Delivered:**

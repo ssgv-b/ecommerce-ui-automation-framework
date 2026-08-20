@@ -1,5 +1,6 @@
 package pages;
 
+import components.AddToCartModalComponent;
 import framework.base.BasePage;
 import framework.drivers.DriverContext;
 import framework.utils.ProductTextParser;
@@ -11,10 +12,12 @@ import org.openqa.selenium.WebElement;
 public class ProductDetailsPage extends BasePage {
     public ProductDetailsPage(DriverContext driverContext) {
         super(driverContext);
+        this.modal = new AddToCartModalComponent(driverContext);
         By productDetailsPageSignal = By.className("product-details");
         waitForVisibleElement(productDetailsPageSignal);
     }
 
+    public final AddToCartModalComponent modal;
     private final By productName = By.xpath("//div[@class='product-information']/h2");
     private final By productCategory = By.xpath("//p[contains(.,'Category')]");
     private final By productPrice = By.xpath("//div[@class='product-information']/span/span");
@@ -23,7 +26,6 @@ public class ProductDetailsPage extends BasePage {
     private final By productBrand = By.xpath("//p[contains(.,'Brand')]");
     private final By productQuantityInput = By.id("quantity");
     private final By addToCartButton = By.xpath("//button[@type='button']");
-    private final By viewCartButtonModal = By.xpath("//u[contains(text(),'View Cart')]");
     private final By reviewNameInput = By.id("name");
     private final By reviewEmailInput = By.id("email");
     private final By reviewTextInput = By.id("review");
@@ -48,9 +50,7 @@ public class ProductDetailsPage extends BasePage {
 
     public CartPage addToCartAndGoToCart() {
         click(addToCartButton);
-        waitForVisibleElement(viewCartButtonModal);
-        click(viewCartButtonModal);
-        return new CartPage(driverContext);
+        return modal.goToCart();
     }
 
     public void addReviewToProduct(String reviewerName, String reviewerEmail, String reviewerTextInput) {

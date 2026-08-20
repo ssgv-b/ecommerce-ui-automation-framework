@@ -6,9 +6,9 @@ import org.openqa.selenium.WebElement;
 import pages.CartPage;
 
 public class AddToCartModalComponent extends BaseComponent {
-    private final By continueShoppingBtn = By.xpath("//button[@data-dismiss='modal']");
+    private final By continueShoppingBtn = By.cssSelector("button[data-dismiss='modal']");
     private final By addToCartModal = By.id("cartModal");
-    private final By goToCartBtn = By.xpath("//a[@href='/view_cart']");
+    private final By goToCartBtn = By.cssSelector("a[href='/view_cart']");
 
     public AddToCartModalComponent(DriverContext driverContext) {
         super(driverContext);
@@ -24,8 +24,7 @@ public class AddToCartModalComponent extends BaseComponent {
     }
 
     public CartPage goToCart() {
-        continueShopping();
-        click(goToCartBtn);
+        scopeToModal().findElement(goToCartBtn).click();
         return new CartPage(driverContext);
     }
 }
