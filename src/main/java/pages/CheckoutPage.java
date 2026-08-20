@@ -17,7 +17,7 @@ public class CheckoutPage extends BasePage {
     }
 
     private final By orderCommentTextArea = By.xpath("//textarea[@name='message']");
-    private final By placeOrderButton = By.xpath("//a[contains(text(),'Place Order')]");
+    private final By placeOrderButton = By.xpath("//a[@href='/payment']");
     private final By deliveryAddressContainer = By.id("address_delivery");
     private final By invoiceAddressContainer = By.id("address_invoice");
     private final By addressName = By.cssSelector(".address_firstname.address_lastname");

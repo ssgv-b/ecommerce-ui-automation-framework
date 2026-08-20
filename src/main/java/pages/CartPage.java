@@ -29,7 +29,7 @@ public class CartPage extends BasePage {
     private final By cartTableRow = By.xpath("//tbody/tr");
     private final By goToCheckoutButton = By.cssSelector("*.check_out");
     private final By registerLogInModalButton = By.xpath("//p[@class='text-center'][2]/a");
-    private final By cartEmptyMessage = By.xpath("//b[contains(text(),'Cart is empty!')]");
+    private final By cartEmptyMessage = By.cssSelector("#empty_cart b");
 
     public void clearCart() {
         while (!getCurrentCartRows().isEmpty()) {

@@ -12,6 +12,13 @@ import org.openqa.selenium.*;
 
 public class HomePage extends BasePage {
 
+    public HomePage(DriverContext driverContext) {
+        super(driverContext);
+        this.category = new CategoryFilterComponent(driverContext);
+        this.brand = new BrandFilterComponent(driverContext);
+        this.modal = new AddToCartModalComponent(driverContext);
+    }
+
     private final By homePageIdentifier = By.id("slider");
     private final By recommendedItemsSection = By.id("recommended-item-carousel");
     private final By carouselProductWrapper = By.cssSelector(".product-image-wrapper");
@@ -24,13 +31,6 @@ public class HomePage extends BasePage {
     public final CategoryFilterComponent category;
     public final BrandFilterComponent brand;
     public final AddToCartModalComponent modal;
-
-    public HomePage(DriverContext driverContext) {
-        super(driverContext);
-        this.category = new CategoryFilterComponent(driverContext);
-        this.brand = new BrandFilterComponent(driverContext);
-        this.modal = new AddToCartModalComponent(driverContext);
-    }
 
     public void verifyHomePageLoaded() {
         waitForElementPresence(homePageIdentifier);
