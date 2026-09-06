@@ -23,6 +23,7 @@ public class ProductTests extends BaseTest {
     private static final String SEARCH_PRODUCTS_VALUE = "Tshirt";
     private static final String REVIEW_SUCCESS_MESSAGE = "Thank you for your review.";
     private static final String EMPTY_CART_MESSAGE = "Cart is empty!";
+    private static final String NONSENSE_SEARCH_TERM = "zzxxyy";
 
     @Test(groups = {"smoke", "regression", "products", "non_destructive", "fast"})
     public void userCanViewProductDetailsFromProductsPage() {
@@ -168,5 +169,15 @@ public class ProductTests extends BaseTest {
         CartPage cartPage = homePage.modal.goToCart();
         Assert.assertEquals(
                 TextNormalizer.normalizeText(cartPage.getCartItemName()), TextNormalizer.normalizeText(productName));
+    }
+
+    @Test
+    public void verifyNoProductsAreReturnedWhenSearchingNonsenseTerm() {
+        ProductsPage productsPage = flows.openProductsPage();
+        productsPage.searchProduct(NONSENSE_SEARCH_TERM);
+        Assert.assertEquals(
+                productsPage.getSearchResultsCount(),
+                0,
+                "No product cards should be returned when using nonsense search term");
     }
 }

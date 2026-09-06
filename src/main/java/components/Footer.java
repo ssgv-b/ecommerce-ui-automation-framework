@@ -24,6 +24,11 @@ public class Footer extends BaseComponent {
         return getTextWhenVisible(subscribeSuccessMessage);
     }
 
+    public boolean isSubscribeEmailValid(String text) {
+        enterText(subscriptionInput, text);
+        return isFieldValid(waitForVisibleElement(subscriptionInput));
+    }
+
     public void scrollToFooter() {
         waitAndScrollToElement(footerSection);
     }

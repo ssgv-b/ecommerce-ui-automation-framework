@@ -117,4 +117,10 @@ public class BaseComponent {
             action.accept(waitForVisibleElement(locator));
         }
     }
+
+    protected boolean isFieldValid(WebElement element) {
+        Boolean isValid = (Boolean) ((JavascriptExecutor) driverContext.getDriver())
+                .executeScript("return arguments[0].checkValidity();", element);
+        return Boolean.TRUE.equals(isValid);
+    }
 }

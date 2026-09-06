@@ -120,4 +120,8 @@ public class ProductsPage extends BasePage {
                 .findFirst()
                 .orElseThrow(() -> new ElementNotFoundException("No search result found!"));
     }
+
+    public int getSearchResultsCount() {
+        return findElements(productCards).size();
+    }
 }
