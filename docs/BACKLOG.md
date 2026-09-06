@@ -151,10 +151,14 @@ Legend: ✅ done · 🔶 in progress · ⬜ not started
 
 ## P3 — Lower (polish & governance)
 
-### ECF-301 · Static analysis + formatting gates — ⬜
-**Branch:** `chore/static-analysis`
+### ECF-301 · Static analysis + formatting gates — ✅ DONE
+**Branch:** `chore/static-analysis` (merged PR #17)
 **Scope:** Spotless/Checkstyle + SpotBugs or PMD in the build. Fix flags, including dead code (`TestExecutionContext.getGroupName/getParams` look unused).
-**Done when:** `mvn verify` fails on style/bug violations; baseline is clean.
+**Delivered (formatter + bug-finder, per the ticket's "or" — skipped Checkstyle as redundant with Palantir + IDE):**
+- **Spotless** (Palantir Java format), `spotless:check` bound to `verify` — gates the build on formatting; ran `spotless:apply` once (repo-wide reformat).
+- **SpotBugs**, `spotbugs:check` bound to `verify`, with a tightly-scoped `spotbugs-exclude.xml` suppressing 2 `URF_UNREAD` false positives on `BaseTest` fields (read by test subclasses SpotBugs's main-only scan can't see).
+- Cleared real findings: removed dead `TestExecutionContext.groupName/params` fields + getters (4× `EI_EXPOSE`); added `default` to `CreateAccountPage.setTitle` switch (`SF_SWITCH_NO_DEFAULT`) throwing `IllegalStateException`.
+**Done when:** ✅ `mvn verify` fails on style/bug violations; baseline is clean (both gates green at zero).
 
 ### ECF-302 · Locator consistency pass — ✅ DONE
 **Branch:** `refactor/locator-consistency`
@@ -167,10 +171,23 @@ Legend: ✅ done · 🔶 in progress · ⬜ not started
 - **Kept as text (no better hook exists, confirmed via DOM):** the 4 `ProductDetailsPage` label fields (plain `<p>`, and `contains(.,…)` is correct — survives the `<b>` nesting `text()` would miss) and `loggedInAsUsername` (dynamic nav text).
 **Done when:** ✅ Hot-path locators use stable id/href/scoped hooks where available; brittle text XPath removed or confirmed unavoidable.
 
-### ECF-303 · Expand negative / edge coverage — ⬜
+### ECF-303 · Expand negative / edge coverage — ✅ DONE
 **Branch:** `test/negative-coverage`
 **Scope:** Add invalid-checkout, empty-search, boundary-quantity cases. Do UI-only cases now; tag API-dependent ones as blocked.
-**Done when:** Each major flow has at least one negative case; blocked ones are tracked.
+**Delivered (4 UI negatives against real guardrails — the site has no server-side input validation, so value-validation negatives aren't assertable; see blocked list):**
+- **Search:** `verifyNoProductsAreReturnedWhenSearchingNonsenseTerm` — nonsense term → `getSearchResultsCount() == 0` (`ProductsPage`; search waits on the invariant "Searched Products" title, so no-results is safe).
+- **Cart:** `verifyCheckoutIsNotAvailableOnEmptyCart` — empty cart hides the checkout control (`CartPage.isCheckoutAvailable()`, optional/visibility wait).
+- **Checkout (access control):** `verifyGuestUserCannotGoToCheckout` — guest proceed-to-checkout → login/register modal instead of payment (`CartPage.attemptGuestCheckout()`).
+- **Newsletter (browser-native constraint):** `verifyInvalidEmailIsNotAllowedForNewsletter` — malformed email fails HTML5 `type=email` validity via `checkValidity()` (`BaseComponent.isFieldValid` → `Footer.isSubscribeEmailValid`).
+- **Routing:** `verify404PageIsServedOnInvalidUrl` — bad URL serves the 404 page (raw driver, no page object — asserts on page content since WebDriver can't read HTTP status).
+- Auth flow already covered by existing negatives (`loginWithInvalidCredentials`, `registerUserWithExistingEmail`).
+
+**Blocked / tracked (not assertable — site accepts invalid input, no server-side validation):**
+- **boundary-quantity < 1** — cart accepts qty `0`/negative with no rejection to assert.
+- **skipped register-field validation** — invalid/blank registration fields are accepted silently.
+- Both become real negatives only with an assertion point the app doesn't currently provide; revisit if the site adds validation or via the API-data-lifecycle work below.
+
+**Done when:** ✅ Each major flow has ≥1 negative case (or a tracked blocker); blocked ones are tracked above.
 
 ### ECF-304 · Move test credentials/data out of code — ⬜
 **Branch:** `chore/externalize-secrets`

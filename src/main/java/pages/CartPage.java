@@ -29,6 +29,7 @@ public class CartPage extends BasePage {
     private final By cartTableRow = By.xpath("//tbody/tr");
     private final By goToCheckoutButton = By.cssSelector("*.check_out");
     private final By registerLogInModalButton = By.xpath("//p[@class='text-center'][2]/a");
+    private final By continueOnCartModalButton = By.xpath("//button[@data-dismiss='modal']");
     private final By cartEmptyMessage = By.cssSelector("#empty_cart b");
 
     public void clearCart() {
@@ -86,6 +87,15 @@ public class CartPage extends BasePage {
     public CheckoutPage goToCheckoutLoggedIn() {
         click(goToCheckoutButton);
         return new CheckoutPage(driverContext);
+    }
+
+    public boolean isCheckoutAvailable() {
+        return waitForOptionalElement(goToCheckoutButton).isPresent();
+    }
+
+    public boolean attemptGuestCheckout() {
+        click(goToCheckoutButton);
+        return waitForOptionalElement(continueOnCartModalButton).isPresent();
     }
 
     public LoginPage goToLoginFromCheckout() {
