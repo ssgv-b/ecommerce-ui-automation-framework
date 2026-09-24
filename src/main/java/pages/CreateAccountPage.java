@@ -55,10 +55,10 @@ public class CreateAccountPage extends BasePage {
 
     private void setPreferences(AccountRegistrationData data) {
         // Independent flags; both may be selected
-        if (data.getSpecialOfferSignUp()) {
+        if (data.isSpecialOfferSignUp()) {
             click(specialOffersCheckbox);
         }
-        if (data.getNewsletterSignUp()) {
+        if (data.isNewsLetterSignUp()) {
             click(newsLetterCheckbox);
         }
     }
