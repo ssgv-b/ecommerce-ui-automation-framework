@@ -7,7 +7,7 @@ public class AccountRegistrationData {
     private final String birthDay;
     private final String birthMonth;
     private final String birthYear;
-    private final boolean newsletterSignUp;
+    private final boolean newsLetterSignUp;
     private final boolean specialOfferSignUp;
     private final String firstName;
     private final String lastName;
@@ -25,7 +25,7 @@ public class AccountRegistrationData {
         this.birthDay = builder.birthDay;
         this.birthMonth = builder.birthMonth;
         this.birthYear = builder.birthYear;
-        this.newsletterSignUp = builder.newsletterSignUp;
+        this.newsLetterSignUp = builder.newsLetterSignUp;
         this.specialOfferSignUp = builder.specialOfferSignUp;
         this.firstName = builder.firstName;
         this.lastName = builder.lastName;
@@ -55,11 +55,11 @@ public class AccountRegistrationData {
         return birthYear;
     }
 
-    public boolean getNewsletterSignUp() {
-        return newsletterSignUp;
+    public boolean isNewsLetterSignUp() {
+        return newsLetterSignUp;
     }
 
-    public boolean getSpecialOfferSignUp() {
+    public boolean isSpecialOfferSignUp() {
         return specialOfferSignUp;
     }
 
@@ -112,7 +112,7 @@ public class AccountRegistrationData {
         private String birthDay;
         private String birthMonth;
         private String birthYear;
-        private boolean newsletterSignUp;
+        private boolean newsLetterSignUp;
         private boolean specialOfferSignUp;
         private String firstName;
         private String lastName;
@@ -145,8 +145,8 @@ public class AccountRegistrationData {
             return this;
         }
 
-        public Builder newsLetterSignUp(boolean newsletterSignUp) {
-            this.newsletterSignUp = newsletterSignUp;
+        public Builder newsLetterSignUp(boolean newsLetterSignUp) {
+            this.newsLetterSignUp = newsLetterSignUp;
             return this;
         }
 
@@ -206,31 +206,14 @@ public class AccountRegistrationData {
         }
 
         public AccountRegistrationData build() {
-            if (firstName == null || firstName.isBlank()) {
-                throw new IllegalStateException("First name is required.");
-            }
-            if (lastName == null || lastName.isBlank()) {
-                throw new IllegalStateException("Last name is required.");
-            }
-            if (address1 == null || address1.isBlank()) {
-                throw new IllegalStateException("Address1 is required.");
-            }
-            if (country == null || country.isBlank()) {
-                throw new IllegalStateException("Country is required.");
-            }
-            if (state == null || state.isBlank()) {
-                throw new IllegalStateException("State is required.");
-            }
-            if (city == null || city.isBlank()) {
-                throw new IllegalStateException("City is required.");
-            }
-            if (zipCode == null || zipCode.isBlank()) {
-                throw new IllegalStateException("Zip code is required.");
-            }
-            if (mobileNumber == null || mobileNumber.isBlank()) {
-                throw new IllegalStateException("Mobile number is required.");
-            }
-
+            requireNonBlankField(firstName, "First name");
+            requireNonBlankField(lastName, "Last name");
+            requireNonBlankField(address1, "Address1");
+            requireNonBlankField(country, "Country");
+            requireNonBlankField(state, "State");
+            requireNonBlankField(city, "City");
+            requireNonBlankField(zipCode, "Zip code");
+            requireNonBlankField(mobileNumber, "Mobile number");
             return new AccountRegistrationData(this);
         }
     }
@@ -250,5 +233,11 @@ public class AccountRegistrationData {
                 .map(String::trim)
                 .reduce((left, right) -> left + " " + right)
                 .orElse("");
+    }
+
+    private static void requireNonBlankField(String requiredField, String fieldName) {
+        if (requiredField == null || requiredField.isBlank()) {
+            throw new IllegalStateException(fieldName + " is required.");
+        }
     }
 }

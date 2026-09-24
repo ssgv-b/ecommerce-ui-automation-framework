@@ -1,64 +1,73 @@
 package framework.testdata;
 
+import constants.Country;
 import models.AccountRegistrationData;
+import net.datafaker.Faker;
+
+import java.time.LocalDate;
+import java.time.format.TextStyle;
+import java.util.Locale;
 
 public class AccountRegistrationTestDataFactory {
 
+    private static final Faker FAKER = new Faker(Locale.US);
+
     public static AccountRegistrationData validRegistrationUserMale() {
         AccountRegistrationData.Builder builder = AccountRegistrationData.builder();
-        builder.title("Mr");
-        builder.birthDay("20");
-        builder.birthMonth("February");
-        builder.birthYear("1996");
-        builder.specialOfferSignUp(true);
-        builder.newsLetterSignUp(true);
-        builder.firstName("John");
-        builder.lastName("Doe");
-        builder.company("OpenAI");
-        builder.address1("123 Main St");
-        builder.address2("Apt 4B");
-        builder.country("United States");
-        builder.state("California");
-        builder.city("San Francisco");
-        builder.zipCode("94105");
-        builder.mobileNumber("+14155552671");
-        return builder.build();
+        LocalDate birthDate = FAKER.timeAndDate().birthday(18, 80);
+        return builder.title("Mr")
+                .birthDay(String.valueOf(birthDate.getDayOfMonth()))
+                .birthMonth(birthDate.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH))
+                .birthYear(String.valueOf(birthDate.getYear()))
+                .specialOfferSignUp(true)
+                .newsLetterSignUp(true)
+                .firstName(FAKER.name().maleFirstName())
+                .lastName(FAKER.name().lastName())
+                .company(FAKER.company().name())
+                .address1(FAKER.address().streetAddress())
+                .address2(FAKER.address().secondaryAddress())
+                .country(FAKER.options().option(Country.class).getCountryName())
+                .state(FAKER.address().state())
+                .city(FAKER.address().cityName())
+                .zipCode(FAKER.address().zipCode())
+                .mobileNumber(FAKER.phoneNumber().phoneNumber())
+                .build();
     }
 
     public static AccountRegistrationData minimalRegistrationUser() {
         AccountRegistrationData.Builder builder = AccountRegistrationData.builder();
-        builder.specialOfferSignUp(true);
-        builder.newsLetterSignUp(true);
-        builder.firstName("Jane");
-        builder.lastName("Smith");
-        builder.address1("456 Elm St");
-        builder.country("India");
-        builder.state("Maharashtra");
-        builder.city("Mumbai");
-        builder.zipCode("400001");
-        builder.mobileNumber("+14155559876");
-        // Only mandatory fields provided
-        return builder.build();
+        return builder.specialOfferSignUp(true)
+                .newsLetterSignUp(true)
+                .firstName(FAKER.name().firstName())
+                .lastName(FAKER.name().lastName())
+                .address1(FAKER.address().streetAddress())
+                .country(FAKER.options().option(Country.class).getCountryName())
+                .state(FAKER.address().state())
+                .city(FAKER.address().cityName())
+                .zipCode(FAKER.address().zipCode())
+                .mobileNumber(FAKER.phoneNumber().phoneNumberInternational())
+                .build();
     }
 
     public static AccountRegistrationData validRegistrationUserFemale() {
         AccountRegistrationData.Builder builder = AccountRegistrationData.builder();
-        builder.title("Mrs");
-        builder.birthDay("23");
-        builder.birthMonth("November");
-        builder.birthYear("1988");
-        builder.newsLetterSignUp(true);
-        builder.specialOfferSignUp(false);
-        builder.firstName("Beth");
-        builder.lastName("Love-Hewitt");
-        builder.company("JP Chase");
-        builder.address1("123 Main St");
-        builder.address2("Apt 4B");
-        builder.country("United States");
-        builder.state("California");
-        builder.city("Sacramento");
-        builder.zipCode("90221");
-        builder.mobileNumber("+14155427269");
-        return builder.build();
+        LocalDate birthDate = FAKER.timeAndDate().birthday(18, 80);
+        return builder.title("Mrs")
+                .birthDay(String.valueOf(birthDate.getDayOfMonth()))
+                .birthMonth(birthDate.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH))
+                .birthYear(String.valueOf(birthDate.getYear()))
+                .newsLetterSignUp(true)
+                .specialOfferSignUp(false)
+                .firstName(FAKER.name().femaleFirstName())
+                .lastName(FAKER.name().lastName())
+                .company(FAKER.company().name())
+                .address1(FAKER.address().streetAddress())
+                .address2(FAKER.address().secondaryAddress())
+                .country(FAKER.options().option(Country.class).getCountryName())
+                .state(FAKER.address().state())
+                .city(FAKER.address().cityName())
+                .zipCode(FAKER.address().zipCode())
+                .mobileNumber(FAKER.phoneNumber().phoneNumber())
+                .build();
     }
 }
