@@ -109,8 +109,8 @@ public class CreateAccountPage extends BasePage {
         switch (title) {
             case "mr" -> click(titleMrRadioBtn);
             case "mrs" -> click(titleMrsRadioBtn);
-            default -> throw new IllegalArgumentException(
-                    "Unsupported title for registration. Allowed values are Mr/Mrs.");
+            default ->
+                throw new IllegalArgumentException("Unsupported title for registration. Allowed values are Mr/Mrs.");
         }
     }
 
@@ -123,8 +123,8 @@ public class CreateAccountPage extends BasePage {
             case "mr", "mrs" -> {
                 return title;
             }
-            default -> throw new IllegalArgumentException(
-                    "Unsupported title for registration. Allowed values are Mr/Mrs.");
+            default ->
+                throw new IllegalArgumentException("Unsupported title for registration. Allowed values are Mr/Mrs.");
         }
     }
 
