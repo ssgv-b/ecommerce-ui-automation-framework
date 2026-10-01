@@ -65,7 +65,7 @@
                 <configuration>
                     <java>
                         <palantirJavaFormat>
-                            <version>2.50.0</version>
+                            <version>2.68.0</version>
                         </palantirJavaFormat>
                     </java>
                 </configuration>
@@ -111,13 +111,7 @@
         <testng.threadCount>1</testng.threadCount>
         <testng.dataProviderThreadCount>1</testng.dataProviderThreadCount>
         <test.env></test.env>
-        <browser>chrome</browser>
-        <headless>false</headless>
-        <baseUrl>https://automationexercise.com</baseUrl>
-        <downloadDir>downloads</downloadDir>
-        <pageLoadTimeout>30</pageLoadTimeout>
-        <waitTimeout>5</waitTimeout>
-        <spotless.version>3.9.0</spotless.version>
+        <spotless.version>3.10.3</spotless.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -185,14 +179,9 @@
             <id>ci</id>
             <properties>
                 <test.env>ci</test.env>
-                <browser>chrome</browser>
-                <headless>true</headless>
                 <testng.parallel>classes</testng.parallel>
                 <testng.threadCount>3</testng.threadCount>
                 <testng.dataProviderThreadCount>1</testng.dataProviderThreadCount>
-                <downloadDir>target/downloads</downloadDir>
-                <pageLoadTimeout>45</pageLoadTimeout>
-                <waitTimeout>8</waitTimeout>
             </properties>
         </profile>
     </profiles>

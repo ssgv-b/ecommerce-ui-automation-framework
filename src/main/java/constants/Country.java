@@ -9,7 +9,6 @@ public enum Country {
     ISRAEL("Israel"),
     NEW_ZEALAND("New Zealand");
 
-
     private final String countryName;
 
     Country(String countryName) {
